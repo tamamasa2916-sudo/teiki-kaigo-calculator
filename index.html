@@ -458,7 +458,7 @@ hr.sep{border:none;border-top:1px solid var(--border);margin:13px 0}
     <div class="acc-header" id="ahdr-nursing"><div class="acc-left"><span class="acc-label">🏥 訪問看護関連加算</span><span class="acc-count" id="cnt-nursing">0</span></div><span class="acc-arrow" id="aarr-nursing">▾</span></div>
   </button>
   <div class="acc-body" id="body-nursing"><div class="acc-inner"><div class="tg">
-    <div><input type="checkbox" class="cb-input" id="c3" data-group="nursing" data-value="574" data-label="緊急時訪問看護加算（Ⅰ）"><label class="cb-lbl" for="c3"><div class="cb-box"></div><div class="cb-body"><div class="cb-text">緊急時訪問看護加算（Ⅰ）訪問看護ステーション</div><div class="cb-unit">+574単位/月</div></div></label></div>
+    <div><input type="checkbox" class="cb-input" id="c3" data-group="nursing" data-value="325" data-label="緊急時訪問看護加算（Ⅰ）"><label class="cb-lbl" for="c3"><div class="cb-box"></div><div class="cb-body"><div class="cb-text">緊急時訪問看護加算（Ⅰ）訪問看護ステーション</div><div class="cb-unit">+325単位/月</div></div></label></div>
     <div><input type="checkbox" class="cb-input" id="c4" data-group="nursing" data-value="315" data-label="緊急時訪問看護加算（Ⅱ）"><label class="cb-lbl" for="c4"><div class="cb-box"></div><div class="cb-body"><div class="cb-text">緊急時訪問看護加算（Ⅱ）医療機関・一体型</div><div class="cb-unit">+315単位/月</div></div></label></div>
     <div><input type="checkbox" class="cb-input" id="c5" data-group="nursing" data-value="250" data-label="専門管理加算"><label class="cb-lbl" for="c5"><div class="cb-box"></div><div class="cb-body"><div class="cb-text">専門管理加算</div><div class="cb-unit">+250単位/月</div></div></label></div>
   </div></div></div>
@@ -837,7 +837,7 @@ function calculate(){
   var subT=Math.max(0,sub0+pAdd-pDed);
   steps.push({l:'加減算後合計単位数（処遇改善除く）',v:fmt(subT)+' 単位',c:'total',sep:true});
   var shU=0;
-  if(sr>0){shU=Math.floor(subT*sr);steps.push({l:'処遇改善加算（×'+Math.round(sr*1000)/10+'%）',v:'+'+fmt(shU)+' 単位',c:'pct'});}
+  if(sr>0){shU=Math.round(subT*sr);steps.push({l:'処遇改善加算（×'+Math.round(sr*1000)/10+'%）',v:'+'+fmt(shU)+' 単位',c:'pct'});}
   var totU=subT+shU;
   steps.push({l:'総単位数（処遇改善込み）',v:fmt(totU)+' 単位',c:'total',sep:true});
   var totF=Math.floor(totU*up);
