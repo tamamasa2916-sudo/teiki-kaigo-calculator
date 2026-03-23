@@ -1,0 +1,1885 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="定期巡回計算">
+<meta name="format-detection" content="telephone=no">
+<meta name="theme-color" content="#1a6fd4">
+<meta name="description" content="定期巡回・随時対応型訪問介護看護 利用料 簡易計算ツール（令和6年度介護報酬改定対応）">
+<!-- PWA manifest -->
+<link rel="manifest" href="manifest.json">
+<!-- iOS ホーム画面アイコン -->
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<!-- iOS スプラッシュ画面 -->
+<link rel="apple-touch-startup-image" href="icons/splash/splash-iphone14pro.png"  media="screen and (device-width:393px) and (device-height:852px) and (-webkit-device-pixel-ratio:3)">
+<link rel="apple-touch-startup-image" href="icons/splash/splash-iphone14pm.png"   media="screen and (device-width:430px) and (device-height:932px) and (-webkit-device-pixel-ratio:3)">
+<link rel="apple-touch-startup-image" href="icons/splash/splash-iphone14.png"     media="screen and (device-width:390px) and (device-height:844px) and (-webkit-device-pixel-ratio:3)">
+<link rel="apple-touch-startup-image" href="icons/splash/splash-iphone13pm.png"   media="screen and (device-width:428px) and (device-height:926px) and (-webkit-device-pixel-ratio:3)">
+<link rel="apple-touch-startup-image" href="icons/splash/splash-iphone12m.png"    media="screen and (device-width:360px) and (device-height:780px) and (-webkit-device-pixel-ratio:3)">
+<link rel="apple-touch-startup-image" href="icons/splash/splash-iphonex.png"      media="screen and (device-width:375px) and (device-height:812px) and (-webkit-device-pixel-ratio:3)">
+<link rel="apple-touch-startup-image" href="icons/splash/splash-iphonexr.png"     media="screen and (device-width:414px) and (device-height:896px) and (-webkit-device-pixel-ratio:2)">
+<link rel="apple-touch-startup-image" href="icons/splash/splash-iphone8.png"      media="screen and (device-width:375px) and (device-height:667px) and (-webkit-device-pixel-ratio:2)">
+<link rel="apple-touch-startup-image" href="icons/splash/splash-ipadpro13.png"    media="screen and (device-width:1024px) and (device-height:1366px) and (-webkit-device-pixel-ratio:2)">
+<link rel="apple-touch-startup-image" href="icons/splash/splash-ipadpro11.png"    media="screen and (device-width:834px) and (device-height:1194px) and (-webkit-device-pixel-ratio:2)">
+<link rel="apple-touch-startup-image" href="icons/splash/splash-ipad.png"         media="screen and (device-width:810px) and (device-height:1080px) and (-webkit-device-pixel-ratio:2)">
+<title>定期巡回 利用料計算</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap');
+:root{
+  --bg:#f0f4f8;--s1:#ffffff;--s2:#f5f7fa;--s3:#e8edf3;
+  --border:#d0d8e4;--accent:#1a6fd4;--accent2:#5c3fc4;
+  --green:#1a8c3c;--yellow:#b8860b;--red:#c0392b;--orange:#c06010;--teal:#1a7a3c;
+  --text:#1a2030;--muted:#4a5568;--dim:#8a95a3;
+}
+*{-webkit-box-sizing:border-box;box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{
+  font-family:'Noto Sans JP',sans-serif;
+  background:var(--bg);color:var(--text);
+  min-height:100vh;
+  padding:16px 14px env(safe-area-inset-bottom,20px);
+  line-height:1.65;font-size:16px;
+  -webkit-overflow-scrolling:touch;
+}
+.wrap{max-width:860px;margin:0 auto}
+
+/* Header */
+header{text-align:center;padding:28px 0 32px}
+header::after{content:'';display:block;width:80px;height:2px;background:-webkit-linear-gradient(left,var(--accent2),var(--accent));background:linear-gradient(90deg,var(--accent2),var(--accent));margin:18px auto 0;border-radius:2px}
+.badge{display:-webkit-inline-flex;display:inline-flex;-webkit-align-items:center;align-items:center;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--accent);background:rgba(26,111,212,.08);border:1px solid rgba(26,111,212,.25);border-radius:20px;padding:4px 14px;margin-bottom:12px}
+h1{font-size:19px;font-weight:700;line-height:1.4}
+h1 small{display:block;font-size:13px;font-weight:400;color:var(--muted);margin-top:5px}
+
+/* Card */
+.card{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:12px}
+.card-head{display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;gap:9px;margin-bottom:18px}
+.num{width:25px;height:25px;border-radius:7px;display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:center;justify-content:center;font-size:12px;font-weight:700;-webkit-flex-shrink:0;flex-shrink:0}
+.n-blue{background:rgba(26,111,212,.12);color:var(--accent)}
+.n-purple{background:rgba(92,63,196,.12);color:var(--accent2)}
+.n-green{background:rgba(26,140,60,.12);color:var(--green)}
+.n-orange{background:rgba(192,96,16,.12);color:var(--orange)}
+.n-teal{background:rgba(26,122,60,.12);color:var(--teal)}
+.card-title{font-size:13px;font-weight:700;letter-spacing:.06em;color:var(--muted);text-transform:uppercase}
+
+/* Form */
+.g2{display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;gap:12px}
+.g2>div{-webkit-flex:1 1 calc(50% - 6px);flex:1 1 calc(50% - 6px);min-width:140px}
+.fg{display:-webkit-flex;display:flex;-webkit-flex-direction:column;flex-direction:column;gap:6px}
+label.fl{font-size:13px;font-weight:500;color:var(--muted);letter-spacing:.04em}
+.hint{font-size:12px;color:var(--dim)}
+
+/* iOS最適化input/select */
+select,input[type=number],input[type=text]{
+  background:var(--s2);border:1px solid var(--border);border-radius:10px;
+  color:var(--text);font-family:'Noto Sans JP',sans-serif;
+  font-size:16px;/* iOS自動ズーム防止 */
+  padding:12px 14px;width:100%;
+  -webkit-appearance:none;appearance:none;
+  outline:none;
+  -webkit-tap-highlight-color:transparent;
+  transition:border-color .15s;
+}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238b949e' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+select:focus,input:focus{border-color:var(--accent)}
+input[type=number]::-webkit-inner-spin-button{opacity:.3}
+
+/* アコーディオン */
+.acc-btn{
+  width:100%;background:none;border:none;padding:0;display:block;margin-top:8px;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+  text-align:left;cursor:pointer;
+}
+.acc-header{pointer-events:none;
+  display:-webkit-flex;display:flex;
+  -webkit-align-items:center;align-items:center;
+  -webkit-justify-content:space-between;justify-content:space-between;
+  padding:13px 14px;min-height:50px;
+  background:var(--s2);border:1px solid var(--border);border-radius:10px;
+}
+.acc-left{display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;gap:7px;-webkit-flex:1;flex:1}
+.acc-label{font-size:15px;font-weight:700;color:var(--text)}
+.acc-count{font-family:'DM Mono',monospace;font-size:11px;color:var(--accent);background:rgba(26,111,212,.1);border-radius:10px;padding:2px 7px;min-width:24px;text-align:center}
+.acc-arrow{color:var(--muted);font-size:11px;-webkit-transition:transform .22s;transition:transform .22s;-webkit-flex-shrink:0;flex-shrink:0}
+.acc-body{overflow:hidden;max-height:0;-webkit-transition:max-height .3s ease;transition:max-height .3s ease;border:1px solid var(--border);border-top:none;border-radius:0 0 10px 10px;background:var(--s1)}
+.acc-body.open{max-height:2800px}
+.acc-inner{padding:14px}
+
+/* チェックボックス（ネイティブ input+label iOS完全対応） */
+.tg{display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;gap:7px}
+.cb-input{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+.cb-lbl{
+  display:-webkit-flex;display:flex;
+  -webkit-align-items:flex-start;align-items:flex-start;
+  gap:9px;
+  background:var(--s2);border:2px solid transparent;border-radius:10px;
+  padding:12px;min-height:52px;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+  -webkit-user-select:none;user-select:none;
+  -webkit-transition:border-color .12s,background .12s;transition:border-color .12s,background .12s;
+  min-width:calc(50% - 4px);
+  -webkit-flex:1;flex:1;
+}
+.cb-lbl:active{background:var(--s3)}
+.cb-input:checked+.cb-lbl{border-color:var(--accent);background:rgba(26,111,212,.06)}
+.cb-lbl.cb-force-reset{border-color:transparent!important;background:var(--s2)!important}
+.cb-lbl.cb-force-reset .cb-box{background:transparent!important;border-color:var(--dim)!important}
+.cb-lbl.cb-force-reset .cb-box::after{content:''!important}
+.cb-lbl.cb-force-reset .cb-text{color:var(--muted)!important}
+.cb-box{
+  width:20px;height:20px;border-radius:5px;border:2px solid var(--dim);
+  -webkit-flex-shrink:0;flex-shrink:0;margin-top:1px;
+  display:-webkit-flex;display:flex;
+  -webkit-align-items:center;align-items:center;
+  -webkit-justify-content:center;justify-content:center;
+  font-size:12px;font-weight:700;color:#fff;
+  -webkit-transition:background .12s,border-color .12s;transition:background .12s,border-color .12s;
+}
+.cb-input:checked+.cb-lbl .cb-box{background:var(--accent);border-color:var(--accent)}
+.cb-input:checked+.cb-lbl .cb-box::after{content:'✓'}
+.cb-body{-webkit-flex:1;flex:1}
+.cb-text{font-size:13px;color:var(--muted);line-height:1.5;-webkit-transition:color .12s;transition:color .12s}
+.cb-input:checked+.cb-lbl .cb-text{color:var(--text)}
+.cb-unit{font-family:'DM Mono',monospace;font-size:12px;color:var(--accent);margin-top:3px}
+.cb-unit.minus{color:var(--red)}
+
+hr.sep{border:none;border-top:1px solid var(--border);margin:13px 0}
+.inline-box{display:none;margin-top:9px;background:var(--s3);border:1px solid var(--border);border-radius:8px;padding:11px}
+.inline-box.show{display:block}
+.hint-box{font-size:12px;color:var(--dim);margin-bottom:9px}
+
+/* Buttons */
+.calc-btn,.print-btn,.reset-btn,.prev-btn{
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+  cursor:pointer;
+  font-family:'Noto Sans JP',sans-serif;
+  border:none;
+}
+.calc-btn{
+  width:100%;padding:17px;margin-top:4px;
+  background:-webkit-linear-gradient(135deg,var(--accent2),var(--accent));
+  background:linear-gradient(135deg,var(--accent2),var(--accent));
+  border-radius:12px;color:#fff;font-size:16px;font-weight:700;letter-spacing:.04em;
+}
+.calc-btn:active{opacity:.82}
+.full-reset-btn{
+  padding:8px 14px;
+  background:none;
+  border:1.5px solid var(--border);
+  border-radius:10px;
+  color:var(--muted);
+  font-size:13px;
+  font-family:'Noto Sans JP',sans-serif;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+  line-height:1.4;
+  text-align:center;
+  -webkit-flex-shrink:0;flex-shrink:0;
+  transition:border-color .15s,color .15s,background .15s;
+  display:-webkit-inline-flex;display:inline-flex;
+  -webkit-align-items:center;align-items:center;
+  gap:5px;
+}
+.full-reset-btn:active{border-color:var(--red);color:var(--red);background:rgba(192,57,43,.06)}
+
+/* バリデーションエラーバナー */
+#validation-banner{
+  display:none;
+  background:rgba(192,57,43,.07);
+  border:1px solid rgba(192,57,43,.3);
+  border-radius:10px;
+  padding:12px 14px;
+  margin-bottom:10px;
+  font-size:13px;
+  color:var(--red);
+  line-height:1.7;
+}
+#validation-banner.show{display:block;-webkit-animation:fadeUp .2s ease;animation:fadeUp .2s ease}
+#validation-banner ul{margin:5px 0 0 16px;padding:0}
+#validation-banner li{margin-bottom:2px}
+
+/* カスタム確認ダイアログ */
+#reset-dialog{
+  display:none;position:fixed;inset:0;z-index:10000;
+  background:rgba(0,0,0,.55);
+  -webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);
+  -webkit-align-items:center;align-items:center;
+  -webkit-justify-content:center;justify-content:center;
+}
+#reset-dialog.open{display:-webkit-flex;display:flex}
+.rdlg-box{
+  background:var(--s1);border:1px solid var(--border);border-radius:16px;
+  padding:28px 24px 20px;max-width:320px;width:90%;
+  -webkit-animation:fadeUp .2s ease;animation:fadeUp .2s ease;
+  text-align:center;
+}
+.rdlg-icon{font-size:32px;margin-bottom:10px}
+.rdlg-title{font-size:16px;font-weight:700;margin-bottom:8px;color:var(--text)}
+.rdlg-body{font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.6}
+.rdlg-btns{display:-webkit-flex;display:flex;gap:10px}
+.rdlg-cancel{
+  -webkit-flex:1;flex:1;padding:12px;
+  background:var(--s2);border:1px solid var(--border);border-radius:10px;
+  color:var(--muted);font-size:14px;font-weight:700;
+  font-family:'Noto Sans JP',sans-serif;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+}
+.rdlg-ok{
+  -webkit-flex:1;flex:1;padding:12px;
+  background:var(--red);border:none;border-radius:10px;
+  color:#fff;font-size:14px;font-weight:700;
+  font-family:'Noto Sans JP',sans-serif;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+}
+
+/* 結果 */
+#result{display:none;-webkit-animation:fadeUp .3s ease;animation:fadeUp .3s ease}
+@-webkit-keyframes fadeUp{from{opacity:0;-webkit-transform:translateY(12px)}to{opacity:1;-webkit-transform:translateY(0)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.result-top{
+  background:-webkit-linear-gradient(135deg,rgba(26,111,212,.06),rgba(92,63,196,.06));
+  background:linear-gradient(135deg,rgba(26,111,212,.06),rgba(92,63,196,.06));
+  border:1px solid rgba(26,111,212,.2);border-radius:14px;padding:24px;text-align:center;margin-bottom:12px;
+}
+.rl{font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-bottom:8px}
+.amount{
+  font-family:'DM Mono',monospace;font-size:46px;font-weight:500;line-height:1;
+  background:-webkit-linear-gradient(135deg,var(--accent),var(--accent2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.unit{font-size:14px;color:var(--muted);margin-top:4px;-webkit-text-fill-color:var(--muted)}
+.copay-note{font-size:10px;color:var(--dim);margin-top:5px;-webkit-text-fill-color:var(--dim)}
+.bk-grid{display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.bk-item{background:var(--s2);border:1px solid var(--border);border-radius:9px;padding:11px 13px;-webkit-flex:1 1 calc(33% - 6px);flex:1 1 calc(33% - 6px);min-width:120px}
+.bk-item .bl{font-size:9px;color:var(--dim);margin-bottom:2px}
+.bk-item .bv{font-family:'DM Mono',monospace;font-size:15px;color:var(--text)}
+.bk-item .bu{font-size:10px;color:var(--muted)}
+.step-tbl{background:var(--s2);border:1px solid var(--border);border-radius:9px;overflow:hidden;margin-bottom:12px}
+.step-row{display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:space-between;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;gap:8px}
+.step-row:last-child{border-bottom:none}
+.sr-l{color:var(--muted);-webkit-flex:1;flex:1;font-size:13px}
+.sr-v{font-family:'DM Mono',monospace;text-align:right;min-width:80px;font-size:13px}
+.sr-v.add{color:var(--green)}.sr-v.sub{color:var(--red)}.sr-v.total{color:var(--text);font-size:13px;font-weight:700}.sr-v.money{color:var(--accent);font-size:13px;font-weight:700}.sr-v.pct{color:var(--orange)}
+.note-box{background:rgba(210,153,34,.05);border:1px solid rgba(210,153,34,.18);border-radius:9px;padding:11px 13px;font-size:12px;color:var(--muted);line-height:1.7}
+.note-box strong{color:var(--yellow)}
+.shogai-box{background:rgba(124,92,252,.05);border:1px solid rgba(124,92,252,.2);border-radius:9px;padding:12px 14px;font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:12px}
+.shogai-box strong{color:#9d78ff}
+
+/* 帳票ボタン群 */
+.print-area{margin-top:14px}
+.print-label{font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--muted);text-transform:uppercase;margin-bottom:7px}
+.print-btns{display:-webkit-flex;display:flex;gap:7px;-webkit-flex-wrap:wrap;flex-wrap:wrap}
+.prev-btn{
+  -webkit-flex:1;flex:1;min-width:90px;
+  padding:11px 6px;background:none;
+  border:2px solid var(--green);border-radius:10px;
+  color:var(--green);font-size:12px;font-weight:700;text-align:center;
+  -webkit-transition:background .15s;transition:background .15s;
+}
+.prev-btn:active{background:rgba(63,185,80,.15)}
+.prev-btn span{display:block;font-size:9px;font-weight:400;color:var(--muted);margin-top:2px}
+.reset-btn{display:block;text-align:center;color:var(--dim);font-size:11px;margin-top:9px;text-decoration:underline;text-underline-offset:3px;background:none;border:none;width:100%}
+
+/* ── プレビューモーダル（iOS完全対応） ── */
+#pv-modal{
+  display:none;
+  position:fixed;
+  top:0;left:0;right:0;bottom:0;
+  z-index:9999;
+  background:rgba(0,0,0,.8);
+  -webkit-overflow-scrolling:touch;
+  overflow:hidden;
+}
+#pv-modal.open{display:-webkit-flex;display:flex;-webkit-flex-direction:column;flex-direction:column}
+#pv-inner{
+  display:-webkit-flex;display:flex;-webkit-flex-direction:column;flex-direction:column;
+  width:100%;height:100%;
+  padding:env(safe-area-inset-top,10px) 0 env(safe-area-inset-bottom,10px);
+}
+#pv-toolbar{
+  display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;
+  gap:6px;padding:10px 12px;
+  background:var(--s2);border-bottom:1px solid var(--border);
+  -webkit-flex-shrink:0;flex-shrink:0;
+  -webkit-flex-wrap:wrap;flex-wrap:wrap;
+}
+.ptab{
+  -webkit-flex:1;flex:1;min-width:72px;
+  padding:9px 4px;background:none;
+  border:1px solid var(--border);border-radius:8px;
+  color:var(--muted);font-family:'Noto Sans JP',sans-serif;
+  font-size:11px;font-weight:700;text-align:center;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;cursor:pointer;
+  -webkit-transition:all .12s;transition:all .12s;
+}
+.ptab.active{background:var(--accent2);border-color:var(--accent2);color:#fff}
+#pv-pdf{
+  padding:9px 12px;background:#1a5fa8;border:none;border-radius:8px;
+  color:#fff;font-family:'Noto Sans JP',sans-serif;font-size:11px;font-weight:700;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;cursor:pointer;
+  white-space:nowrap;-webkit-flex-shrink:0;flex-shrink:0;
+}
+#pv-print{
+  padding:9px 12px;background:var(--green);border:none;border-radius:8px;
+  color:#fff;font-family:'Noto Sans JP',sans-serif;font-size:11px;font-weight:700;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;cursor:pointer;
+  white-space:nowrap;-webkit-flex-shrink:0;flex-shrink:0;
+}
+#pv-close{
+  padding:9px 12px;background:var(--red);border:none;border-radius:8px;
+  color:#fff;font-family:'Noto Sans JP',sans-serif;font-size:11px;font-weight:700;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;cursor:pointer;
+  white-space:nowrap;-webkit-flex-shrink:0;flex-shrink:0;
+}
+#pv-scroll{
+  -webkit-flex:1;flex:1;
+  overflow-y:auto;-webkit-overflow-scrolling:touch;
+  background:#d4d4d8;
+  padding:16px 12px;
+}
+/* A4プレビューシート */
+#pv-sheet{
+  background:#fff;color:#000;
+  width:100%;max-width:640px;
+  min-height:400px;
+  margin:0 auto;
+  border-radius:3px;
+  box-shadow:0 4px 20px rgba(0,0,0,.4);
+  padding:24px 22px;
+  font-family:'Noto Sans JP',sans-serif;
+  font-size:11px;line-height:1.65;
+}
+
+/* ── 印刷専用CSS ── */
+@media print{
+  body{background:#fff!important;color:#000!important;padding:0!important;font-size:10pt}
+  body>*:not(#result){display:none!important}
+  #result{display:block!important;position:static}
+  #result>.card{border:none!important;background:#fff!important;padding:0!important;margin:0!important}
+  .print-area,.reset-btn,#pv-modal,#pwa-banner{display:none!important}
+  #print-only{display:block!important}
+  .amount{-webkit-text-fill-color:#1a5fa8!important;background:none!important;font-size:30pt!important}
+  .unit{-webkit-text-fill-color:#555!important}
+  .copay-note{-webkit-text-fill-color:#777!important}
+  .result-top{background:#f0f4ff!important;border:2px solid #1a5fa8!important}
+  .bk-item{background:#f5f5f5!important;border:1px solid #ccc!important}
+  .bk-item .bl,.bk-item .bu{color:#555!important}
+  .bk-item .bv{color:#000!important}
+  .step-tbl{border:1px solid #ccc!important;background:#fff!important}
+  .sr-l{color:#333!important}
+  .sr-v{color:#000!important}
+  .sr-v.add{color:#1a7a3c!important}.sr-v.sub{color:#c0392b!important}
+  .sr-v.total{color:#000!important;font-weight:700}
+  .sr-v.money{color:#1a5fa8!important;font-weight:700}
+  .sr-v.pct{color:#b7600a!important}
+  .note-box{display:block!important;background:#fffbe6!important;border:1px solid #e0c040!important;color:#555!important}
+  :root{--text:#000;--muted:#333;--dim:#555;--border:#bbb;--s1:#fff;--s2:#f5f5f5;--s3:#eee}
+  @page{size:A4 portrait;margin:14mm 12mm}
+}
+#print-only{display:none}
+
+/* ── PDF保存ガイドモーダル ── */
+#pdf-guide{
+  display:none;position:fixed;inset:0;z-index:19999;
+  background:rgba(0,0,0,.75);
+  -webkit-align-items:center;align-items:center;
+  -webkit-justify-content:center;justify-content:center;
+  padding:20px;
+}
+#pdf-guide.open{display:-webkit-flex;display:flex}
+#pdf-guide-box{
+  background:var(--s1);border:1px solid var(--border);border-radius:16px;
+  padding:24px 20px;width:100%;max-width:400px;
+}
+#pdf-guide-box h3{font-size:15px;font-weight:700;color:var(--text);margin-bottom:6px}
+#pdf-guide-box .pg-sub{font-size:11px;color:var(--muted);margin-bottom:18px}
+.pg-step{
+  display:-webkit-flex;display:flex;gap:12px;
+  -webkit-align-items:flex-start;align-items:flex-start;
+  margin-bottom:14px;
+}
+.pg-num{
+  width:24px;height:24px;border-radius:50%;
+  background:#58a6ff;color:#fff;
+  font-size:12px;font-weight:700;
+  display:-webkit-flex;display:flex;
+  -webkit-align-items:center;align-items:center;
+  -webkit-justify-content:center;justify-content:center;
+  -webkit-flex-shrink:0;flex-shrink:0;
+}
+.pg-text{font-size:12px;color:var(--text);line-height:1.6;padding-top:2px}
+.pg-text strong{color:var(--accent)}
+.pg-os{
+  background:var(--s2);border-radius:8px;padding:10px 12px;
+  font-size:11px;color:var(--muted);line-height:1.7;margin-bottom:16px;
+}
+.pg-os b{color:var(--accent)}
+.pg-btns{display:-webkit-flex;display:flex;gap:8px}
+.pg-ok{
+  -webkit-flex:1;flex:1;padding:13px;
+  background:-webkit-linear-gradient(135deg,#7c5cfc,#58a6ff);
+  background:linear-gradient(135deg,#7c5cfc,#58a6ff);
+  border:none;border-radius:10px;color:#fff;
+  font-family:'Noto Sans JP',sans-serif;font-size:14px;font-weight:700;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;cursor:pointer;
+}
+.pg-cancel{
+  padding:13px 16px;background:none;
+  border:1px solid var(--border);border-radius:10px;color:var(--muted);
+  font-family:'Noto Sans JP',sans-serif;font-size:13px;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;cursor:pointer;
+}
+
+/* ── 履歴カード ── */
+#history-section{margin-bottom:12px;display:none}
+#history-section.show{display:block}
+.hist-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.hist-title{font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--muted);text-transform:uppercase}
+.hist-clear{background:none;border:none;font-size:11px;color:var(--dim);text-decoration:underline;cursor:pointer;font-family:'Noto Sans JP',sans-serif;-webkit-tap-highlight-color:transparent}
+.hist-list{display:flex;flex-direction:column;gap:7px}
+.hist-item{
+  background:var(--s1);border:1px solid var(--border);border-radius:10px;
+  padding:11px 14px;cursor:pointer;
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+  transition:border-color .12s,background .12s;
+}
+.hist-item:active{background:var(--s2)}
+.hist-item:hover{border-color:var(--accent)}
+.hist-left{flex:1}
+.hist-label{font-size:12px;font-weight:700;color:var(--text);margin-bottom:2px}
+.hist-sub{font-size:10px;color:var(--muted)}
+.hist-amount{font-family:'DM Mono',monospace;font-size:16px;font-weight:700;color:var(--accent);white-space:nowrap}
+.hist-yen{font-size:10px;color:var(--muted);margin-left:2px}
+
+/* ── 種別制限：算定不可加算のグレーアウト ── */
+.acc-disabled{opacity:.45;pointer-events:none;}
+.acc-disabled .acc-header{background:var(--s3);}
+.acc-na-badge{
+  font-size:10px;font-weight:700;color:var(--red);
+  background:rgba(192,57,43,.1);border:1px solid rgba(192,57,43,.25);
+  border-radius:6px;padding:2px 7px;margin-left:6px;white-space:nowrap;
+}
+
+/* ── PWAインストールバナー ── */
+#pwa-banner{
+  display:none;
+  position:fixed;
+  bottom:0;
+  bottom:env(safe-area-inset-bottom,0);
+  left:0;right:0;
+  z-index:8888;
+  background:linear-gradient(135deg,rgba(124,92,252,.97),rgba(88,166,255,.97));
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  padding:12px 16px;
+  padding-bottom:calc(12px + env(safe-area-inset-bottom,0px));
+  align-items:center;
+  gap:10px;
+  box-shadow:0 -4px 20px rgba(0,0,0,.3);
+}
+#pwa-banner.show{display:-webkit-flex;display:flex}
+#pwa-install-btn{
+  background:#fff;color:#7c5cfc;border:none;border-radius:8px;
+  padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;
+  font-family:'Noto Sans JP',sans-serif;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+  white-space:nowrap;
+}
+#pwa-dismiss-btn{
+  background:none;border:none;color:rgba(255,255,255,.7);
+  font-size:20px;cursor:pointer;padding:4px 2px;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+}
+
+/* SW更新バナー */
+#sw-update-banner{
+  display:none;position:fixed;bottom:0;left:0;right:0;z-index:9998;
+  background:var(--accent2);color:#fff;
+  padding:12px 16px env(safe-area-inset-bottom,0);
+  -webkit-align-items:center;align-items:center;
+  -webkit-justify-content:space-between;justify-content:space-between;
+  gap:10px;flex-wrap:wrap;
+  box-shadow:0 -2px 12px rgba(0,0,0,.15);
+}
+#sw-update-banner.show{display:-webkit-flex;display:flex}
+#sw-update-btn{
+  background:#fff;border:none;border-radius:8px;
+  color:var(--accent2);font-size:13px;font-weight:700;
+  font-family:'Noto Sans JP',sans-serif;
+  padding:8px 14px;cursor:pointer;white-space:nowrap;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+}
+#sw-dismiss-btn{
+  background:none;border:none;color:rgba(255,255,255,.7);
+  font-size:20px;cursor:pointer;padding:4px 2px;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+}
+</style>
+<!-- 全リセット確認ダイアログ -->
+<div id="reset-dialog" role="dialog" aria-modal="true" aria-labelledby="rdlg-title-text">
+  <div class="rdlg-box">
+    <div class="rdlg-icon">🔄</div>
+    <div class="rdlg-title" id="rdlg-title-text">全リセット</div>
+    <div class="rdlg-body">すべての入力項目を初期値に戻します。<br>この操作は取り消せません。</div>
+    <div class="rdlg-btns">
+      <button type="button" class="rdlg-cancel" id="rdlg-cancel">キャンセル</button>
+      <button type="button" class="rdlg-ok" id="rdlg-ok">リセットする</button>
+    </div>
+  </div>
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+
+<!-- PWAインストールバナー -->
+<div id="pwa-banner">
+  <div style="flex:1">
+    <div style="font-size:13px;font-weight:700;color:#fff;">📱 ホーム画面に追加</div>
+    <div style="font-size:11px;color:rgba(255,255,255,.8);margin-top:2px;">オフラインでも使えます</div>
+  </div>
+  <button id="pwa-install-btn">追加する</button>
+  <button id="pwa-dismiss-btn">✕</button>
+</div>
+
+<!-- SW更新バナー -->
+<div id="sw-update-banner">
+  <div style="font-size:13px;flex:1">🆕 アプリが更新されました。再読み込みで反映されます。</div>
+  <button id="sw-update-btn">今すぐ更新</button>
+  <button id="sw-dismiss-btn">✕</button>
+</div>
+
+<div class="wrap">
+<header style="position:relative">
+  <div class="badge">📋 令和6年度介護報酬改定対応</div>
+  <h1>定期巡回・随時対応型<br>訪問介護看護<small>利用料 簡易計算ツール</small></h1>
+  <button type="button" class="full-reset-btn" data-action="fullreset" style="position:absolute;top:0;right:0">🔄 全リセット</button>
+</header>
+
+<!-- 計算履歴 -->
+<div id="history-section">
+  <div class="hist-head">
+    <div class="hist-title">🕘 計算履歴（最大3件）</div>
+    <button type="button" class="hist-clear" id="hist-clear-btn">すべて削除</button>
+  </div>
+  <div class="hist-list" id="hist-list"></div>
+</div>
+
+<!-- ①基本情報 -->
+<div class="card">
+  <div class="card-head"><div class="num n-blue">①</div><div class="card-title">基本情報</div></div>
+  <div class="g2">
+    <div class="fg"><label class="fl">事業所の種別</label>
+      <select id="serviceType">
+        <option value="integrated_no_nursing">一体型（訪問看護なし）</option>
+        <option value="integrated_nursing">一体型（訪問看護あり）</option>
+        <option value="cooperation">連携型</option>
+      </select>
+    </div>
+    <div class="fg"><label class="fl">要介護度</label>
+      <select id="careLevel">
+        <option value="1">要介護 1</option><option value="2">要介護 2</option>
+        <option value="3">要介護 3</option><option value="4">要介護 4</option>
+        <option value="5">要介護 5</option>
+      </select>
+    </div>
+    <div class="fg"><label class="fl">地域区分</label>
+      <select id="region">
+        <option value="11.40">1級地 11.40円</option>
+        <option value="11.12">2級地 11.12円</option>
+        <option value="11.05">3級地 11.05円</option>
+        <option value="10.84">4級地 10.84円</option>
+        <option value="10.70">5級地 10.70円</option>
+        <option value="10.42">6級地 10.42円</option>
+        <option value="10.21">7級地 10.21円</option>
+        <option value="10.00" selected>その他 10.00円</option>
+      </select>
+    </div>
+    <div class="fg"><label class="fl">負担割合</label>
+      <select id="copayRate">
+        <option value="0.1">1割</option>
+        <option value="0.2">2割</option>
+        <option value="0.3">3割</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<!-- ②加算 -->
+<div class="card">
+  <div class="card-head"><div class="num n-purple">②</div><div class="card-title">各種加算</div></div>
+
+  <button type="button" class="acc-btn" id="abtn-mgmt" data-acc="mgmt">
+    <div class="acc-header" id="ahdr-mgmt"><div class="acc-left"><span class="acc-label">🏢 マネジメント・体制加算</span><span class="acc-count" id="cnt-mgmt">0</span></div><span class="acc-arrow" id="aarr-mgmt" style="-webkit-transform:rotate(180deg);transform:rotate(180deg)">▾</span></div>
+  </button>
+  <div class="acc-body open" id="body-mgmt"><div class="acc-inner"><div class="tg">
+    <div><input type="checkbox" class="cb-input" id="c1" data-group="mgmt" data-value="1200" data-label="総合マネジメント体制強化加算（Ⅰ）" data-exclusive="mgmt-kaigo"><label class="cb-lbl" for="c1"><div class="cb-box"></div><div class="cb-body"><div class="cb-text">総合マネジメント体制強化加算（Ⅰ）</div><div class="cb-unit">+1,200単位/月</div></div></label></div>
+    <div><input type="checkbox" class="cb-input" id="c2" data-group="mgmt" data-value="800" data-label="総合マネジメント体制強化加算（Ⅱ）" data-exclusive="mgmt-kaigo"><label class="cb-lbl" for="c2"><div class="cb-box"></div><div class="cb-body"><div class="cb-text">総合マネジメント体制強化加算（Ⅱ）</div><div class="cb-unit">+800単位/月</div></div></label></div>
+  </div></div></div>
+
+  <button type="button" class="acc-btn" id="abtn-nursing" data-acc="nursing">
+    <div class="acc-header" id="ahdr-nursing"><div class="acc-left"><span class="acc-label">🏥 訪問看護関連加算</span><span class="acc-count" id="cnt-nursing">0</span></div><span class="acc-arrow" id="aarr-nursing">▾</span></div>
+  </button>
+  <div class="acc-body" id="body-nursing"><div class="acc-inner"><div class="tg">
+    <div><input type="checkbox" class="cb-input" id="c3" data-group="nursing" data-value="325" data-label="緊急時訪問看護加算（Ⅰ）" data-exclusive="nursing-kinkyu"><label class="cb-lbl" for="c3"><div class="cb-box"></div><div class="cb-body"><div class="cb-text">緊急時訪問看護加算（Ⅰ）訪問看護ステーション</div><div class="cb-unit">+325単位/月</div></div></label></div>
+    <div><input type="checkbox" class="cb-input" id="c4" data-group="nursing" data-value="315" data-label="緊急時訪問看護加算（Ⅱ）" data-exclusive="nursing-kinkyu"><label class="cb-lbl" for="c4"><div class="cb-box"></div><div class="cb-body"><div class="cb-text">緊急時訪問看護加算（Ⅱ）医療機関・一体型</div><div class="cb-unit">+315単位/月</div></div></label></div>
+    <div><input type="checkbox" class="cb-input" id="c5" data-group="nursing" data-value="250" data-label="専門管理加算"><label class="cb-lbl" for="c5"><div class="cb-box"></div><div class="cb-body"><div class="cb-text">専門管理加算</div><div class="cb-unit">+250単位/月</div></div></label></div>
+  </div></div></div>
+
+  <button type="button" class="acc-btn" id="abtn-tokubetsu" data-acc="tokubetsu">
+    <div class="acc-header" id="ahdr-tokubetsu"><div class="acc-left"><span class="acc-label">🩺 特別管理加算（一体型のみ）</span><span class="acc-count" id="cnt-tokubetsu">0</span></div><span class="acc-arrow" id="aarr-tokubetsu">▾</span></div>
+  </button>
+  <div class="acc-body" id="body-tokubetsu"><div class="acc-inner">
+    <div class="hint-box">※（Ⅰ）（Ⅱ）いずれか1つ・区分支給限度基準額対象外</div>
+    <div class="tg">
+      <div><input type="checkbox" class="cb-input" id="c6" data-group="tokubetsu" data-value="500" data-label="特別管理加算（Ⅰ）" data-exclusive="tokubetsu"><label class="cb-lbl" for="c6"><div class="cb-box"></div><div class="cb-body"><div class="cb-text">特別管理加算（Ⅰ）悪性腫瘍・気管切開等</div><div class="cb-unit">+500単位/月</div></div></label></div>
+      <div><input type="checkbox" class="cb-input" id="c7" data-group="tokubetsu" data-value="250" data-label="特別管理加算（Ⅱ）" data-exclusive="tokubetsu"><label class="cb-lbl" for="c7"><div class="cb-box"></div><div class="cb-body"><div class="cb-text">特別管理加算（Ⅱ）在宅酸素・褥瘡・点滴等</div><div class="cb-unit">+250単位/月</div></div></label></div>
+    </div>
+  </div></div>
+
+  <button type="button" class="acc-btn" id="abtn-taisei" data-acc="taisei">
+    <div class="acc-header" id="ahdr-taisei"><div class="acc-left"><span class="acc-label">🏅 サービス提供体制強化加算</span><span class="acc-count" id="cnt-taisei">0</span></div><span class="acc-arrow" id="aarr-taisei">▾</span></div>
+  </button>
+  <div class="acc-body" id="body-taisei"><div class="acc-inner">
+    <div class="hint-box">※（Ⅰ）〜（Ⅲ）いずれか1つ・区分支給限度基準額対象外</div>
+    <div class="tg">
+      <div><input type="checkbox" class="cb-input" id="c8" data-group="taisei" data-value="750" data-label="サービス提供体制強化加算（Ⅰ）" data-exclusive="taisei"><label class="cb-lbl" for="c8"><div class="cb-box"></div><div class="cb-body"><div class="cb-text">体制強化加算（Ⅰ）介護福祉士60%以上</div><div class="cb-unit">+750単位/月</div></div></label></div>
+      <div><input type="checkbox" class="cb-input" id="c9" data-group="taisei" data-value="640" data-label="サービス提供体制強化加算（Ⅱ）" data-exclusive="taisei"><label class="cb-lbl" for="c9"><div class="cb-box"></div><div class="cb-body"><div class="cb-text">体制強化加算（Ⅱ）介護福祉士50%以上</div><div class="cb-unit">+640単位/月</div></div></label></div>
+      <div><input type="checkbox" class="cb-input" id="c10" data-group="taisei" data-value="350" data-label="サービス提供体制強化加算（Ⅲ）" data-exclusive="taisei"><label class="cb-lbl" for="c10"><div class="cb-box"></div><div class="cb-body"><div class="cb-text">体制強化加算（Ⅲ）介護福祉士30%以上等</div><div class="cb-unit">+350単位/月</div></div></label></div>
+    </div>
+  </div></div>
+
+  <button type="button" class="acc-btn" id="abtn-ninchi" data-acc="ninchi">
+    <div class="acc-header" id="ahdr-ninchi"><div class="acc-left"><span class="acc-label">🧠 認知症専門ケア加算</span><span class="acc-count" id="cnt-ninchi">0</span></div><span class="acc-arrow" id="aarr-ninchi">▾</span></div>
+  </button>
+  <div class="acc-body" id="body-ninchi"><div class="acc-inner">
+    <div class="hint-box">※（Ⅰ）（Ⅱ）いずれか1つのみ</div>
+    <div class="tg">
+      <div><input type="checkbox" class="cb-input" id="c11" data-group="ninchi" data-per-day="3" data-label="認知症専門ケア加算（Ⅰ）" data-exclusive="ninchi" data-needs-days="niDays"><label class="cb-lbl" for="c11"><div class="cb-box"></div><div class="cb-body"><div class="cb-text">認知症専門ケア加算（Ⅰ）</div><div class="cb-unit">+3単位/日</div></div></label></div>
+      <div><input type="checkbox" class="cb-input" id="c12" data-group="ninchi" data-per-day="4" data-label="認知症専門ケア加算（Ⅱ）" data-exclusive="ninchi" data-needs-days="niDays"><label class="cb-lbl" for="c12"><div class="cb-box"></div><div class="cb-body"><div class="cb-text">認知症専門ケア加算（Ⅱ）</div><div class="cb-unit">+4単位/日</div></div></label></div>
+    </div>
+    <div class="inline-box" id="niDays-box"><label class="fl">対象日数</label><input type="number" id="niDays" value="30" min="1" max="30" style="margin-top:5px;max-width:140px"></div>
+  </div></div>
+
+  <button type="button" class="acc-btn" id="abtn-reha" data-acc="reha">
+    <div class="acc-header" id="ahdr-reha"><div class="acc-left"><span class="acc-label">🦾 リハビリ・口腔連携加算</span><span class="acc-count" id="cnt-reha">0</span></div><span class="acc-arrow" id="aarr-reha">▾</span></div>
+  </button>
+  <div class="acc-body" id="body-reha"><div class="acc-inner"><div class="tg">
+    <div><input type="checkbox" class="cb-input" id="c13" data-group="reha" data-value="100" data-label="生活機能向上連携加算（Ⅰ）" data-exclusive="reha-kinou"><label class="cb-lbl" for="c13"><div class="cb-box"></div><div class="cb-body"><div class="cb-text">生活機能向上連携加算（Ⅰ）</div><div class="cb-unit">+100単位/月</div></div></label></div>
+    <div><input type="checkbox" class="cb-input" id="c14" data-group="reha" data-value="200" data-label="生活機能向上連携加算（Ⅱ）" data-exclusive="reha-kinou"><label class="cb-lbl" for="c14"><div class="cb-box"></div><div class="cb-body"><div class="cb-text">生活機能向上連携加算（Ⅱ）</div><div class="cb-unit">+200単位/月</div></div></label></div>
+    <div><input type="checkbox" class="cb-input" id="c15" data-group="reha" data-value="50" data-label="口腔連携強化加算"><label class="cb-lbl" for="c15"><div class="cb-box"></div><div class="cb-body"><div class="cb-text">口腔連携強化加算</div><div class="cb-unit">+50単位/回</div></div></label></div>
+  </div></div></div>
+
+  <button type="button" class="acc-btn" id="abtn-init" data-acc="init">
+    <div class="acc-header" id="ahdr-init"><div class="acc-left"><span class="acc-label">🕐 初期・ターミナル加算</span><span class="acc-count" id="cnt-init">0</span></div><span class="acc-arrow" id="aarr-init">▾</span></div>
+  </button>
+  <div class="acc-body" id="body-init"><div class="acc-inner">
+    <div class="tg">
+      <div><input type="checkbox" class="cb-input" id="c16" data-group="init" data-per-day="30" data-label="初期加算" data-needs-days="initDays"><label class="cb-lbl" for="c16"><div class="cb-box"></div><div class="cb-body"><div class="cb-text">初期加算（利用開始後30日以内）</div><div class="cb-unit">+30単位/日</div></div></label></div>
+      <div><input type="checkbox" class="cb-input" id="c17" data-group="init" data-value="2500" data-label="ターミナルケアマネジメント加算"><label class="cb-lbl" for="c17"><div class="cb-box"></div><div class="cb-body"><div class="cb-text">ターミナルケアマネジメント加算</div><div class="cb-unit">+2,500単位/月</div></div></label></div>
+    </div>
+    <div class="inline-box" id="initDays-box"><label class="fl">初期加算 対象日数（最大30日）</label><input type="number" id="initDays" value="30" min="1" max="30" style="margin-top:5px;max-width:140px"></div>
+  </div></div>
+
+  <button type="button" class="acc-btn" id="abtn-area" data-acc="area">
+    <div class="acc-header" id="ahdr-area"><div class="acc-left"><span class="acc-label">📍 地域・特別地域加算</span><span class="acc-count" id="cnt-area">0</span></div><span class="acc-arrow" id="aarr-area">▾</span></div>
+  </button>
+  <div class="acc-body" id="body-area"><div class="acc-inner">
+    <div class="hint-box">※所定単位数の合計に対する割合で加算。特別地域加算と中山間地域等小規模事業所加算はいずれか一方のみ算定可</div>
+    <div class="tg">
+      <div><input type="checkbox" class="cb-input" id="c18" data-group="area" data-pct="0.15" data-label="特別地域加算（15%）" data-exclusive="area-tokubetsu"><label class="cb-lbl" for="c18"><div class="cb-box"></div><div class="cb-body"><div class="cb-text">特別地域加算</div><div class="cb-unit">＋15%</div></div></label></div>
+      <div><input type="checkbox" class="cb-input" id="c19" data-group="area" data-pct="0.10" data-label="中山間地域等小規模事業所加算（10%）" data-exclusive="area-tokubetsu"><label class="cb-lbl" for="c19"><div class="cb-box"></div><div class="cb-body"><div class="cb-text">中山間地域等小規模事業所加算</div><div class="cb-unit">＋10%</div></div></label></div>
+      <div><input type="checkbox" class="cb-input" id="c20" data-group="area" data-pct="0.05" data-label="中山間地域等居住者サービス提供加算（5%）"><label class="cb-lbl" for="c20"><div class="cb-box"></div><div class="cb-body"><div class="cb-text">中山間地域等居住者サービス提供加算</div><div class="cb-unit">＋5%</div></div></label></div>
+    </div>
+  </div></div>
+</div>
+
+<!-- ③減算 -->
+<div class="card">
+  <div class="card-head"><div class="num n-orange">③</div><div class="card-title">各種減算</div></div>
+
+  <button type="button" class="acc-btn" id="abtn-bldg" data-acc="bldg">
+    <div class="acc-header" id="ahdr-bldg"><div class="acc-left"><span class="acc-label">🏠 建物・通所利用減算</span><span class="acc-count" id="cnt-bldg">0</span></div><span class="acc-arrow" id="aarr-bldg" style="-webkit-transform:rotate(180deg);transform:rotate(180deg)">▾</span></div>
+  </button>
+  <div class="acc-body open" id="body-bldg"><div class="acc-inner">
+    <div class="tg" style="margin-bottom:12px">
+      <div><input type="checkbox" class="cb-input" id="c21" data-group="bldg" data-value="600" data-label="同一敷地内建物等減算（20人未満）" data-deduct="true" data-exclusive="bldg-deduct"><label class="cb-lbl" for="c21"><div class="cb-box"></div><div class="cb-body"><div class="cb-text">同一敷地内建物等減算（20人未満）</div><div class="cb-unit minus">−600単位/月</div></div></label></div>
+      <div><input type="checkbox" class="cb-input" id="c22" data-group="bldg" data-value="900" data-label="同一敷地内建物等減算（50人以上）" data-deduct="true" data-exclusive="bldg-deduct"><label class="cb-lbl" for="c22"><div class="cb-box"></div><div class="cb-body"><div class="cb-text">同一敷地内建物等減算（50人以上）</div><div class="cb-unit minus">−900単位/月</div></div></label></div>
+    </div>
+    <hr class="sep">
+    <div class="g2" style="gap:10px;margin-top:4px">
+      <div class="fg"><label class="fl">通所利用日数</label><input type="number" id="daycareDays" value="0" min="0" max="31"></div>
+      <div class="fg"><label class="fl">1日あたり減算単位数</label>
+        <select id="daycareUnitRate">
+          <option value="0">通所なし（0単位）</option>
+          <optgroup label="一体型（看護あり）"><option value="91">要介護1：91単位/日</option><option value="141">要介護2：141単位/日</option><option value="216">要介護3：216単位/日</option><option value="266">要介護4：266単位/日</option><option value="322">要介護5：322単位/日</option></optgroup>
+          <optgroup label="一体型（看護なし）・連携型"><option value="62">要介護1：62単位/日</option><option value="111">要介護2：111単位/日</option><option value="184">要介護3：184単位/日</option><option value="233">要介護4：233単位/日</option><option value="281">要介護5：281単位/日</option></optgroup>
+        </select>
+        <div class="hint" id="daycare-auto-hint" style="display:none;color:var(--accent)">⟳ 種別・要介護度から自動設定</div>
+      </div>
+    </div>
+    <div style="margin-top:8px">
+      <label style="display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;gap:8px;font-size:13px;color:var(--muted);cursor:pointer;-webkit-user-select:none;user-select:none">
+        <input type="checkbox" id="daycareAutoSync" style="width:16px;height:16px;accent-color:var(--accent);cursor:pointer">
+        種別・要介護度が変わったとき自動で更新する
+      </label>
+    </div>
+  </div></div>
+
+  <button type="button" class="acc-btn" id="abtn-pctded" data-acc="pctded">
+    <div class="acc-header" id="ahdr-pctded"><div class="acc-left"><span class="acc-label">⚠ 体制未整備減算</span><span class="acc-count" id="cnt-pctded">0</span></div><span class="acc-arrow" id="aarr-pctded">▾</span></div>
+  </button>
+  <div class="acc-body" id="body-pctded"><div class="acc-inner"><div class="tg">
+    <div><input type="checkbox" class="cb-input" id="c23" data-group="pctded" data-pct-deduct="0.01" data-label="高齢者虐待防止措置未実施減算（1%）"><label class="cb-lbl" for="c23"><div class="cb-box"></div><div class="cb-body"><div class="cb-text">高齢者虐待防止措置未実施減算</div><div class="cb-unit minus">−1%</div></div></label></div>
+    <div><input type="checkbox" class="cb-input" id="c24" data-group="pctded" data-pct-deduct="0.01" data-label="業務継続計画（BCP）未策定減算（1%）"><label class="cb-lbl" for="c24"><div class="cb-box"></div><div class="cb-body"><div class="cb-text">業務継続計画（BCP）未策定減算</div><div class="cb-unit minus">−1%</div></div></label></div>
+    <div><input type="checkbox" class="cb-input" id="c25" data-group="pctded" data-pct-deduct="0.10" data-label="准看護師減算（10%）"><label class="cb-lbl" for="c25"><div class="cb-box"></div><div class="cb-body"><div class="cb-text">准看護師によるサービス提供減算</div><div class="cb-unit minus">−10%</div></div></label></div>
+  </div></div></div>
+</div>
+
+<!-- ④処遇改善加算 -->
+<div class="card">
+  <div class="card-head"><div class="num n-teal">④</div><div class="card-title">処遇改善加算</div></div>
+  <div class="shogai-box"><strong>計算方法</strong><br>加減算後の総単位数×加算率　Ⅰ＝24.5%　Ⅱ＝22.4%　Ⅲ＝18.2%　Ⅳ＝14.5%</div>
+  <div class="fg"><label class="fl">処遇改善加算の区分</label>
+    <select id="shokaigo">
+      <option value="0">なし</option>
+      <option value="0.245">処遇改善加算（Ⅰ） ＋24.5%</option>
+      <option value="0.224">処遇改善加算（Ⅱ） ＋22.4%</option>
+      <option value="0.182">処遇改善加算（Ⅲ） ＋18.2%</option>
+      <option value="0.145">処遇改善加算（Ⅳ） ＋14.5%</option>
+    </select>
+  </div>
+</div>
+
+<!-- ⑤日割り -->
+<div class="card">
+  <div class="card-head"><div class="num n-green">⑤</div><div class="card-title">日割り計算</div></div>
+  <div class="g2">
+    <div class="fg"><label class="fl">月の日数</label>
+      <select id="monthDays" onchange="syncMonthDays(this.value)">
+        <option value="28">28日</option><option value="29">29日</option>
+        <option value="30" selected>30日</option><option value="31">31日</option>
+      </select>
+    </div>
+    <div class="fg"><label class="fl">実際の利用日数</label>
+      <input type="number" id="usedDays" value="30" min="1" max="30">
+      <div class="hint">満月の場合は月の日数と同じ値</div>
+    </div>
+  </div>
+</div>
+
+<!-- ⑥帳票情報 -->
+<div class="card">
+  <div class="card-head"><div class="num n-blue">⑥</div><div class="card-title">帳票印刷用 情報（任意）</div></div>
+  <div class="g2">
+    <div class="fg"><label class="fl">利用者名</label><input type="text" id="userName" placeholder="山田　太郎" maxlength="30"></div>
+    <div class="fg"><label class="fl">要介護認定年月</label><input type="text" id="certDate" placeholder="2024年10月" maxlength="20"></div>
+    <div class="fg"><label class="fl">事業所名</label><input type="text" id="companyName" placeholder="○○訪問介護看護事業所" maxlength="40"></div>
+    <div class="fg"><label class="fl">担当者名</label><input type="text" id="staffName" placeholder="鈴木　花子" maxlength="20"></div>
+    <div class="fg"><label class="fl">対象年月</label><input type="text" id="targetMonth" placeholder="2025年1月" maxlength="20"></div>
+    <div class="fg"><label class="fl">備考</label><input type="text" id="remarks" placeholder="任意メモ" maxlength="60"></div>
+  </div>
+</div>
+
+<div id="validation-banner" role="alert">
+  <strong>⚠ 入力内容を確認してください</strong>
+  <ul id="validation-errors"></ul>
+</div>
+<div style="display:-webkit-flex;display:flex;gap:8px;margin-top:4px">
+  <button type="button" class="calc-btn" data-action="calculate" style="margin-top:0">🔢　利用料を計算する</button>
+</div>
+
+<!-- 結果 -->
+<div id="result">
+  <div class="card" style="margin-top:12px">
+    <!-- 印刷時のみ表示 -->
+    <div id="print-only">
+      <h2 id="pt-title" style="font-size:13pt;font-weight:700;color:#000;border-bottom:2px solid #1a5fa8;padding-bottom:7px;margin-bottom:4px"></h2>
+      <p id="pt-sub" style="font-size:8.5pt;color:#555;margin-bottom:14px"></p>
+    </div>
+    <div style="display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:space-between;justify-content:space-between;-webkit-flex-wrap:wrap;flex-wrap:wrap;gap:8px;margin-bottom:16px">
+      <div style="font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--muted);text-transform:uppercase">📊 計算結果</div>
+      <div id="result-date" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--dim)"></div>
+    </div>
+    <div class="result-top">
+      <div class="rl">月額 利用者自己負担額（概算）</div>
+      <div class="amount" id="copay-main">0</div>
+      <div class="unit">円</div>
+      <div class="copay-note" id="copay-note"></div>
+    </div>
+    <div class="bk-grid">
+      <div class="bk-item"><div class="bl">基本単位数</div><div class="bv" id="bk-base">0 <span class="bu">単位</span></div></div>
+      <div class="bk-item"><div class="bl">加減算後（処遇改善除く）</div><div class="bv" id="bk-sub">0 <span class="bu">単位</span></div></div>
+      <div class="bk-item"><div class="bl">処遇改善加算単位数</div><div class="bv" id="bk-shogai">0 <span class="bu">単位</span></div></div>
+      <div class="bk-item"><div class="bl">総単位数</div><div class="bv" id="bk-total">0 <span class="bu">単位</span></div></div>
+      <div class="bk-item"><div class="bl">総報酬額</div><div class="bv" id="bk-fee">0 <span class="bu">円</span></div></div>
+      <div class="bk-item"><div class="bl">地域区分単価</div><div class="bv" id="bk-unitprice">10.00 <span class="bu">円/単位</span></div></div>
+    </div>
+    <div class="step-tbl" id="step-tbl"></div>
+    <div class="note-box"><strong>⚠ ご注意</strong><br>概算です。正確な金額は事業所・ケアマネにご確認ください。高額介護サービス費で軽減される場合があります。</div>
+    <!-- 帳票ボタン -->
+    <div class="print-area">
+      <div class="print-label">🖨️ 帳票プレビュー / 印刷</div>
+      <div class="print-btns">
+        <button type="button" class="prev-btn" data-preview="simple">📄 簡易版<span>自己負担額のみ</span></button>
+        <button type="button" class="prev-btn" data-preview="detail">📋 詳細版<span>計算内訳つき</span></button>
+        <button type="button" class="prev-btn" data-preview="invoice">🧾 請求書風<span>利用者・事業所情報つき</span></button>
+      </div>
+    </div>
+    <button type="button" class="reset-btn" data-action="reset">← 条件を変更して再計算</button>
+  </div>
+</div>
+</div><!-- /wrap -->
+
+<!-- プレビューモーダル -->
+<div id="pv-modal">
+  <div id="pv-inner">
+    <div id="pv-toolbar">
+      <button type="button" class="ptab active" id="ptab-simple"  data-switch="simple" >📄 簡易版</button>
+      <button type="button" class="ptab"        id="ptab-detail"  data-switch="detail" >📋 詳細版</button>
+      <button type="button" class="ptab"        id="ptab-invoice" data-switch="invoice">🧾 請求書風</button>
+      <button type="button" id="pv-pdf"    data-action="savepdf">📥 PDF保存</button>
+      <button type="button" id="pv-print"  data-action="execprint">🖨️ 印刷</button>
+      <button type="button" id="pv-close"  data-action="close">✕ 閉じる</button>
+    </div>
+    <div id="pv-scroll">
+      <div id="pv-sheet"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Service Worker登録 -->
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('./sw.js').then(function(reg) {
+      console.log('[PWA] Service Worker 登録完了:', reg.scope);
+      reg.onupdatefound = function() {
+        var newWorker = reg.installing;
+        newWorker.onstatechange = function() {
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            /* カスタム更新バナーを表示 */
+            var ub = document.getElementById('sw-update-banner');
+            if (ub) {
+              ub.classList.add('show');
+              var updBtn = document.getElementById('sw-update-btn');
+              if (updBtn) updBtn.onclick = function() {
+                newWorker.postMessage({ action: 'skipWaiting' });
+                window.location.reload();
+              };
+              var disBtn = document.getElementById('sw-dismiss-btn');
+              if (disBtn) disBtn.onclick = function() {
+                ub.classList.remove('show');
+              };
+            }
+          }
+        };
+      };
+    }).catch(function(err) {
+      console.warn('[PWA] Service Worker 登録失敗:', err);
+    });
+  });
+}
+
+// PWAインストールバナー制御
+(function(){
+  var deferredPrompt = null;
+  var banner = document.getElementById('pwa-banner');
+  var installBtn = document.getElementById('pwa-install-btn');
+  var dismissBtn = document.getElementById('pwa-dismiss-btn');
+
+  window.addEventListener('beforeinstallprompt', function(e) {
+    e.preventDefault();
+    deferredPrompt = e;
+    if (banner) banner.classList.add('show');
+  });
+
+  if (installBtn) {
+    installBtn.addEventListener('click', function() {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(function(choice) {
+        if (choice.outcome === 'accepted') {
+          if (banner) banner.classList.remove('show');
+        }
+        deferredPrompt = null;
+      });
+    });
+  }
+
+  if (dismissBtn) {
+    dismissBtn.addEventListener('click', function() {
+      if (banner) banner.classList.remove('show');
+    });
+  }
+
+  window.addEventListener('appinstalled', function() {
+    if (banner) banner.classList.remove('show');
+    deferredPrompt = null;
+  });
+})();
+</script>
+
+<script>
+(function(){
+'use strict';
+
+var BASE={integrated_no_nursing:{1:5446,2:9720,3:16140,4:20417,5:24692},integrated_nursing:{1:7946,2:12413,3:18948,4:23358,5:28298},cooperation:{1:5446,2:9720,3:16140,4:20417,5:24692}};
+var SVCLABEL={integrated_no_nursing:'一体型（訪問看護なし）',integrated_nursing:'一体型（訪問看護あり）',cooperation:'連携型'};
+var _lastSteps=[];
+var _pvMode='simple';
+var _scrollY=0;
+
+function onTap(el, fn){
+  var touched=false;
+  el.addEventListener('touchend',function(e){
+    e.preventDefault();
+    touched=true;
+    setTimeout(function(){touched=false;},500);
+    fn(e);
+  },{passive:false});
+  el.addEventListener('click',function(e){
+    if(touched){touched=false;return;}
+    fn(e);
+  });
+}
+
+function toggleAcc(id){
+  var body=document.getElementById('body-'+id);
+  var arr=document.getElementById('aarr-'+id);
+  var open=body.classList.contains('open');
+  body.classList.toggle('open',!open);
+  if(arr){
+    var v=open?'':'rotate(180deg)';
+    arr.style.webkitTransform=v;
+    arr.style.transform=v;
+  }
+}
+
+function fmt(n){return Math.floor(n).toLocaleString('ja-JP');}
+
+/* ── monthDays 変更時：関連する日数入力の上限を同期 ── */
+function syncMonthDays(md){
+  md=parseInt(md)||30;
+  var fields=['usedDays','niDays'];
+  for(var i=0;i<fields.length;i++){
+    var el=document.getElementById(fields[i]);
+    if(!el) continue;
+    el.max=md;
+    if(parseInt(el.value)>md) el.value=md;
+  }
+  /* initDays：制度上限30日 と 月日数 の小さい方 */
+  var initEl=document.getElementById('initDays');
+  if(initEl){
+    var initMax=Math.min(md,30);
+    initEl.max=initMax;
+    if(parseInt(initEl.value)>initMax) initEl.value=initMax;
+  }
+  var dcEl=document.getElementById('daycareDays');
+  if(dcEl){ dcEl.max=md; if(parseInt(dcEl.value)>md) dcEl.value=md; }
+}
+
+/* 通所減算レートテーブル（種別→要介護度→単位/日） */
+var DAYCARE_RATE={
+  integrated_nursing:   {1:91,2:141,3:216,4:266,5:322},
+  integrated_no_nursing:{1:62, 2:111,3:184,4:233,5:281},
+  cooperation:          {1:62, 2:111,3:184,4:233,5:281}
+};
+
+/* ── 通所減算の自動連動 ── */
+function syncDaycareRate(){
+  var autoEl=document.getElementById('daycareAutoSync');
+  if(!autoEl||!autoEl.checked) return;
+  var dcRawStr=document.getElementById('daycareDays').value;
+  var dcDays=dcRawStr===''?-1:parseInt(dcRawStr); /* 空欄は -1 で「未入力」扱い */
+  var sel=document.getElementById('daycareUnitRate');
+  var hint=document.getElementById('daycare-auto-hint');
+  if(dcDays<=0){
+    /* 0 または空欄：通所なしとして選択を 0 に戻す */
+    if(sel) sel.value='0';
+    if(hint) hint.style.display='none';
+    return;
+  }
+  var svc=document.getElementById('serviceType').value;
+  var lv=parseInt(document.getElementById('careLevel').value);
+  var rate=DAYCARE_RATE[svc]&&DAYCARE_RATE[svc][lv]?DAYCARE_RATE[svc][lv]:0;
+  if(sel) sel.value=String(rate);
+  if(hint) hint.style.display=rate>0?'block':'none';
+}
+
+/* ── 入力バリデーション（計算前チェック） ── */
+function validateInputs(){
+  var md=parseInt(document.getElementById('monthDays').value)||30;
+  var udRaw=parseInt(document.getElementById('usedDays').value);
+  var errors=[];
+
+  if(isNaN(udRaw)||udRaw<1){
+    errors.push('利用日数を1以上で入力してください。');
+  } else if(udRaw>md){
+    errors.push('利用日数（'+udRaw+'日）が月の日数（'+md+'日）を超えています。');
+  }
+
+  var dcRaw=parseInt(document.getElementById('daycareDays').value);
+  var dcDays=isNaN(dcRaw)?0:dcRaw;
+  if(dcDays<0){
+    errors.push('通所利用日数はマイナスにできません。');
+    dcDays=0; /* 以降の比較用に0扱い */
+  }
+  var ud=isNaN(udRaw)||udRaw<1?md:Math.min(udRaw,md);
+  if(dcDays>ud){
+    errors.push('通所利用日数（'+dcDays+'日）が利用日数（'+ud+'日）を超えています。');
+  }
+
+  var niDays=parseInt(document.getElementById('niDays').value)||0;
+  if(niDays<1||niDays>md){
+    var niBox=document.getElementById('niDays-box');
+    if(niBox&&niBox.classList.contains('show')){
+      errors.push('認知症専門ケア加算の対象日数は1〜'+md+'日で入力してください。');
+    }
+  }
+
+  var banner=document.getElementById('validation-banner');
+  var errList=document.getElementById('validation-errors');
+  if(errors.length>0){
+    if(errList){
+      var html='';
+      for(var ei=0;ei<errors.length;ei++) html+='<li>'+errors[ei]+'</li>';
+      errList.innerHTML=html;
+    }
+    if(banner){
+      banner.classList.add('show');
+      banner.scrollIntoView({behavior:'smooth',block:'center'});
+    }
+    return false;
+  }
+  if(banner) banner.classList.remove('show');
+  return true;
+}
+
+/* ── localStorage 自動保存・復元 ── */
+var _autosaveTimer=null;
+var AUTOSAVE_KEY='teiki_autosave';
+
+function autosave(){
+  clearTimeout(_autosaveTimer);
+  _autosaveTimer=setTimeout(function(){
+    try{
+      var state=captureFullState();
+      localStorage.setItem(AUTOSAVE_KEY,JSON.stringify(state));
+    }catch(e){}
+  },600);
+}
+
+function restoreAutosave(){
+  try{
+    var s=localStorage.getItem(AUTOSAVE_KEY);
+    if(!s) return false;
+    var state=JSON.parse(s);
+    if(!state||!state.svc) return false;
+    restoreFullState(state); /* updateAddonAvailability は restoreFullState 末尾で呼ばれる */
+    return true;
+  }catch(e){ return false; }
+}
+
+function clearAutosave(){
+  try{ localStorage.removeItem(AUTOSAVE_KEY); }catch(e){}
+}
+
+function calculate(){
+  if(!validateInputs()) return;
+
+  var svc=document.getElementById('serviceType').value;
+  var lv=parseInt(document.getElementById('careLevel').value);
+  var up=parseFloat(document.getElementById('region').value);
+  var cr=parseFloat(document.getElementById('copayRate').value);
+  var md=parseInt(document.getElementById('monthDays').value);
+  var udRaw=parseInt(document.getElementById('usedDays').value);
+  var ud=Math.min(isNaN(udRaw)||udRaw<1?md:udRaw,md);
+  var dd=Math.min(parseInt(document.getElementById('daycareDays').value)||0,ud);
+  var dr=parseInt(document.getElementById('daycareUnitRate').value)||0;
+  var sr=parseFloat(document.getElementById('shokaigo').value)||0;
+  var niD=Math.min(parseInt(document.getElementById('niDays').value)||ud,ud);
+  var inD=Math.min(parseInt(document.getElementById('initDays').value)||30,30);
+  var isPro=ud<md;
+  var steps=[];
+
+  var bRaw=BASE[svc][lv];
+  var base=isPro?Math.floor(bRaw*ud/md):bRaw;
+  steps.push({l:'基本単位数（'+SVCLABEL[svc]+' 要介護'+lv+'）',v:fmt(bRaw)+' 単位',c:''});
+  if(isPro) steps.push({l:'日割り（'+ud+'日÷'+md+'日）',v:'→ '+fmt(base)+' 単位',c:''});
+
+  var fAdd=0;
+  var vCbs=document.querySelectorAll('.cb-input[data-value]:checked');
+  for(var i=0;i<vCbs.length;i++){
+    var cb=vCbs[i];if(cb.getAttribute('data-deduct'))continue;
+    if(cb.disabled) continue;
+    var v=parseInt(cb.getAttribute('data-value'));fAdd+=v;
+    steps.push({l:'＋ '+cb.getAttribute('data-label'),v:'+'+fmt(v)+' 単位',c:'add'});
+  }
+  var pCbs=document.querySelectorAll('.cb-input[data-per-day]:checked');
+  for(var i=0;i<pCbs.length;i++){
+    var cb=pCbs[i];
+    if(cb.disabled) continue;
+    var r=parseInt(cb.getAttribute('data-per-day'));
+    var d=cb.getAttribute('data-needs-days')==='niDays'?niD:inD;
+    var v=r*d;fAdd+=v;
+    steps.push({l:'＋ '+cb.getAttribute('data-label')+'（'+d+'日×'+r+'単位）',v:'+'+fmt(v)+' 単位',c:'add'});
+  }
+
+  var fDed=0;
+  var dCbs=document.querySelectorAll('.cb-input[data-deduct]:checked');
+  for(var i=0;i<dCbs.length;i++){
+    var cb=dCbs[i];
+    if(cb.disabled) continue;
+    var v=parseInt(cb.getAttribute('data-value'));fDed+=v;
+    steps.push({l:'－ '+cb.getAttribute('data-label'),v:'−'+fmt(v)+' 単位',c:'sub'});
+  }
+  if(dd>0&&dr>0){var dv=dr*dd;fDed+=dv;steps.push({l:'－ 通所利用減算（'+dd+'日×'+dr+'単位）',v:'−'+fmt(dv)+' 単位',c:'sub'});}
+
+  var sub0=Math.max(0,base+fAdd-fDed);
+  var pAdd=0;
+  var paCbs=document.querySelectorAll('.cb-input[data-pct]:checked');
+  /* disabled なものを除外した有効な地域加算リストを作成 */
+  var activePaCbs=[];
+  for(var i=0;i<paCbs.length;i++){ if(!paCbs[i].disabled) activePaCbs.push(paCbs[i]); }
+  var pDed=0;
+  var pdCbs=document.querySelectorAll('.cb-input[data-pct-deduct]:checked');
+  var activePdCbs=[];
+  for(var i=0;i<pdCbs.length;i++){ if(!pdCbs[i].disabled) activePdCbs.push(pdCbs[i]); }
+  /* 地域加算または減算があるときだけ所定単位数行を1回だけ出力 */
+  if(activePaCbs.length>0||activePdCbs.length>0){
+    steps.push({l:'所定単位数（小計）',v:fmt(sub0)+' 単位',c:'',sep:true});
+  }
+  if(activePaCbs.length>0){
+    for(var i=0;i<activePaCbs.length;i++){
+      var cb=activePaCbs[i];
+      var r=parseFloat(cb.getAttribute('data-pct'));var v=Math.floor(sub0*r);pAdd+=v;
+      steps.push({l:'＋ '+cb.getAttribute('data-label'),v:'+'+fmt(v)+' 単位',c:'add'});
+    }
+  }
+  if(activePdCbs.length>0){
+    for(var i=0;i<activePdCbs.length;i++){
+      var cb=activePdCbs[i];
+      var r=parseFloat(cb.getAttribute('data-pct-deduct'));var v=Math.floor(sub0*r);pDed+=v;
+      steps.push({l:'－ '+cb.getAttribute('data-label'),v:'−'+fmt(v)+' 単位',c:'sub'});
+    }
+  }
+
+  var subT=Math.max(0,sub0+pAdd-pDed);
+  steps.push({l:'加減算後合計単位数（処遇改善除く）',v:fmt(subT)+' 単位',c:'total',sep:true});
+  var shU=0;
+  if(sr>0){shU=Math.round(subT*sr);steps.push({l:'処遇改善加算（×'+Math.round(sr*1000)/10+'%）',v:'+'+fmt(shU)+' 単位',c:'pct'});}
+  var totU=subT+shU;
+  steps.push({l:'総単位数（処遇改善込み）',v:fmt(totU)+' 単位',c:'total',sep:true});
+  var totF=Math.floor(totU*up);
+  var cop=Math.floor(totF*cr);
+  var ins=totF-cop;
+  steps.push({l:'総報酬額（×'+up.toFixed(2)+'円/単位）',v:fmt(totF)+' 円',c:''});
+  steps.push({l:'介護保険給付額（'+Math.round((1-cr)*100)+'割）',v:fmt(ins)+' 円',c:''});
+  steps.push({l:'利用者自己負担額（'+Math.round(cr*100)+'割）',v:fmt(cop)+' 円',c:'money',sep:true});
+
+  _lastSteps=steps;
+
+  document.getElementById('copay-main').textContent=fmt(cop);
+  document.getElementById('copay-note').textContent='総報酬 '+fmt(totF)+'円 のうち'+Math.round(cr*100)+'割負担';
+  document.getElementById('bk-base').innerHTML=fmt(base)+' <span class="bu">単位</span>';
+  document.getElementById('bk-sub').innerHTML=fmt(subT)+' <span class="bu">単位</span>';
+  document.getElementById('bk-shogai').innerHTML=fmt(shU)+' <span class="bu">単位</span>';
+  document.getElementById('bk-total').innerHTML=fmt(totU)+' <span class="bu">単位</span>';
+  document.getElementById('bk-fee').innerHTML=fmt(totF)+' <span class="bu">円</span>';
+  document.getElementById('bk-unitprice').innerHTML=up.toFixed(2)+' <span class="bu">円/単位</span>';
+
+  function pad2(n){return n<10?'0'+n:String(n);}
+  var now=new Date();
+  document.getElementById('result-date').textContent='算出: '+now.getFullYear()+'/'+pad2(now.getMonth()+1)+'/'+pad2(now.getDate())+' '+pad2(now.getHours())+':'+pad2(now.getMinutes());
+
+  var html='';
+  for(var i=0;i<steps.length;i++){
+    var s=steps[i];
+    var st=s.sep?'border-top:2px solid var(--border);':'';
+    html+='<div class="step-row" style="'+st+'"><span class="sr-l">'+s.l+'</span><span class="sr-v '+s.c+'">'+s.v+'</span></div>';
+  }
+  document.getElementById('step-tbl').innerHTML=html;
+
+  var panel=document.getElementById('result');
+  panel.style.display='block';
+  setTimeout(function(){
+    var top=panel.getBoundingClientRect().top+window.pageYOffset-10;
+    window.scrollTo(0,top);
+  },80);
+
+  /* ── 履歴に保存 ── */
+  var state=captureFullState();
+  state.copay=cop;
+  state.fee=totF;
+  var nt=new Date();
+  function pad2h(n){return n<10?'0'+n:String(n);}
+  state.time=(nt.getMonth()+1)+'/'+(nt.getDate())+' '+pad2h(nt.getHours())+':'+pad2h(nt.getMinutes());
+  saveHistory(state);
+  renderHistory();
+}
+
+function resetResult(){
+  document.getElementById('result').style.display='none';
+  window.scrollTo(0,0);
+}
+
+function openResetDialog(){
+  var dlg=document.getElementById('reset-dialog');
+  if(dlg) dlg.classList.add('open');
+}
+function closeResetDialog(){
+  var dlg=document.getElementById('reset-dialog');
+  if(dlg) dlg.classList.remove('open');
+}
+
+function fullReset(){
+  /* ① セレクト・インプットを初期値に戻す */
+  var defaults={
+    serviceType:'integrated_no_nursing',
+    careLevel:'1',
+    region:'10.00',
+    copayRate:'0.1',
+    monthDays:'30',
+    usedDays:'30',
+    daycareDays:'0',
+    daycareUnitRate:'0',
+    shokaigo:'0',
+    niDays:'30',
+    initDays:'30',
+    userName:'',
+    companyName:'',
+    staffName:'',
+    targetMonth:'',
+    certDate:'',
+    remarks:''
+  };
+  for(var fid in defaults){
+    var el=document.getElementById(fid);
+    if(el) el.value=defaults[fid];
+  }
+  /* daycareAutoSync もリセット */
+  var dcAuto=document.getElementById('daycareAutoSync');
+  if(dcAuto) dcAuto.checked=false;
+  var dcHint=document.getElementById('daycare-auto-hint');
+  if(dcHint) dcHint.style.display='none';
+  /* monthDays 連動：上限を30にリセット */
+  syncMonthDays(30);
+
+  /* ② バッジ・グレーアウト残留を先にクリア（updateAddonAvailabilityより前に行う） */
+  var badges=document.querySelectorAll('.acc-na-badge');
+  for(var i=0;i<badges.length;i++){ badges[i].parentNode.removeChild(badges[i]); }
+  var disabledBtns=document.querySelectorAll('.acc-disabled');
+  for(var i=0;i<disabledBtns.length;i++){ disabledBtns[i].classList.remove('acc-disabled'); }
+  var styledLbls=document.querySelectorAll('.cb-lbl[style]');
+  for(var i=0;i<styledLbls.length;i++){
+    styledLbls[i].style.opacity='';
+    styledLbls[i].style.pointerEvents='';
+  }
+
+  /* ③ チェックボックスを全解除・disabled解除・見た目を確実にリセット */
+  var allCbs=document.querySelectorAll('.cb-input');
+  for(var i=0;i<allCbs.length;i++){
+    allCbs[i].checked=false;
+    allCbs[i].disabled=false;
+    var lbl=allCbs[i].nextElementSibling;
+    if(lbl&&lbl.classList.contains('cb-lbl')) lbl.classList.add('cb-force-reset');
+  }
+
+  /* ④ inline-boxを非表示に */
+  var inlineBoxes=document.querySelectorAll('.inline-box');
+  for(var i=0;i<inlineBoxes.length;i++){ inlineBoxes[i].classList.remove('show'); }
+
+  /* ⑤ カウントをリセット */
+  var groups=['mgmt','nursing','tokubetsu','taisei','ninchi','reha','init','area','bldg','pctded'];
+  for(var k=0;k<groups.length;k++){
+    var el=document.getElementById('cnt-'+groups[k]);
+    if(!el) continue;
+    el.textContent='0';
+    el.style.background='rgba(26,111,212,.08)';
+  }
+
+  /* ⑥ アコーディオンの開閉・矢印を初期HTML状態に戻す */
+  var accGroups=[
+    {id:'mgmt',open:true},{id:'nursing',open:false},{id:'tokubetsu',open:false},
+    {id:'taisei',open:false},{id:'ninchi',open:false},{id:'reha',open:false},
+    {id:'init',open:false},{id:'area',open:false},{id:'bldg',open:true},{id:'pctded',open:false}
+  ];
+  for(var ai=0;ai<accGroups.length;ai++){
+    var ag=accGroups[ai];
+    var body=document.getElementById('body-'+ag.id);
+    var arr=document.getElementById('aarr-'+ag.id);
+    if(body) body.classList.toggle('open',ag.open);
+    if(arr){var v=ag.open?'rotate(180deg)':'';arr.style.webkitTransform=v;arr.style.transform=v;}
+  }
+
+  /* ⑦ 種別制限を初期値（integrated_no_nursing）で再適用してから
+        次フレームでforce-resetクラスを外す（CSS :checked再評価を確実に） */
+  updateAddonAvailability();
+  (window.requestAnimationFrame||function(f){setTimeout(f,16);})(function(){
+    var lbls=document.querySelectorAll('.cb-lbl.cb-force-reset');
+    for(var j=0;j<lbls.length;j++) lbls[j].classList.remove('cb-force-reset');
+  });
+
+  /* ⑧ 計算結果・バリデーションバナーを非表示・ページ先頭へ */
+  document.getElementById('result').style.display='none';
+  var vb=document.getElementById('validation-banner');
+  if(vb) vb.classList.remove('show');
+  window.scrollTo(0,0);
+  clearAutosave();
+}
+
+function escHtml(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function buildSheetHTML(mode){
+  var svcEl=document.getElementById('serviceType');
+  var lvEl=document.getElementById('careLevel');
+  var crEl=document.getElementById('copayRate');
+  var svcText=svcEl.options[svcEl.selectedIndex].text;
+  var lvText=lvEl.options[lvEl.selectedIndex].text;
+  var crText=crEl.options[crEl.selectedIndex].text;
+  var now=new Date();
+  var dateStr=now.getFullYear()+'年'+String(now.getMonth()+1).padStart(2,'0')+'月'+String(now.getDate()).padStart(2,'0')+'日';
+  var uName  =escHtml((document.getElementById('userName').value||'').trim());
+  var coName =escHtml((document.getElementById('companyName').value||'').trim());
+  var stName =escHtml((document.getElementById('staffName').value||'').trim());
+  var tMonth =escHtml((document.getElementById('targetMonth').value||'').trim());
+  var cDate  =escHtml((document.getElementById('certDate').value||'').trim());
+  var rem    =escHtml((document.getElementById('remarks').value||'').trim());
+  var copayAmt=document.getElementById('copay-main').textContent;
+  var copayNote=document.getElementById('copay-note').textContent;
+
+  var titles={
+    simple:'定期巡回・随時対応型訪問介護看護　月額自己負担額（概算）',
+    detail:'定期巡回・随時対応型訪問介護看護　利用料計算結果（概算）',
+    invoice:'定期巡回・随時対応型訪問介護看護　利用料のご案内'
+  };
+  var subtitle=svcText+'　'+lvText+'　'+crText;
+  if(tMonth) subtitle+='　対象月：'+tMonth;
+  subtitle+='　算出日：'+dateStr;
+
+  var bkData=[
+    {l:'基本単位数',v:document.getElementById('bk-base').textContent},
+    {l:'加減算後単位数',v:document.getElementById('bk-sub').textContent},
+    {l:'処遇改善加算単位数',v:document.getElementById('bk-shogai').textContent},
+    {l:'総単位数',v:document.getElementById('bk-total').textContent},
+    {l:'総報酬額',v:document.getElementById('bk-fee').textContent},
+    {l:'地域区分単価',v:document.getElementById('bk-unitprice').textContent}
+  ];
+  var bkHtml='';
+  for(var i=0;i<bkData.length;i++){
+    bkHtml+='<div style="background:#f5f5f5;border:1px solid #ccc;border-radius:5px;padding:7px 9px">'
+      +'<div style="font-size:8px;color:#666;margin-bottom:2px">'+bkData[i].l+'</div>'
+      +'<div style="font-family:monospace;font-size:11px;font-weight:600;color:#111">'+bkData[i].v+'</div></div>';
+  }
+  var stepsHtml='';
+  for(var i=0;i<_lastSteps.length;i++){
+    var s=_lastSteps[i];
+    var color=s.c==='add'?'#1a7a3c':s.c==='sub'?'#c0392b':s.c==='money'?'#1a5fa8':s.c==='total'?'#111':s.c==='pct'?'#b7600a':'#444';
+    var fw=(s.c==='money'||s.c==='total')?'700':'400';
+    var bt=s.sep?'border-top:2px solid #ccc;':'';
+    stepsHtml+='<tr style="'+bt+'"><td style="padding:5px 9px;border-bottom:1px solid #e5e5e5;font-size:9px;color:#333">'+s.l+'</td>'
+      +'<td style="padding:5px 9px;border-bottom:1px solid #e5e5e5;text-align:right;font-family:monospace;font-size:9px;color:'+color+';font-weight:'+fw+'">'+s.v+'</td></tr>';
+  }
+  var invHdr='';
+  if(mode==='invoice'){
+    var toHtml=(uName?'<span style="font-size:15px;font-weight:700">'+uName+'</span> 様':'利用者　様');
+    var toSub=[];
+    if(lvText) toSub.push(lvText);
+    if(cDate)  toSub.push('認定：'+cDate);
+    if(rem)    toSub.push(rem);
+    var fromLines=[];
+    if(tMonth) fromLines.push('対象月：<strong>'+tMonth+'</strong>');
+    fromLines.push('発行日：'+dateStr);
+    if(coName) fromLines.push('<strong style="font-size:11px">'+coName+'</strong>');
+    if(stName) fromLines.push('担当：'+stName);
+    invHdr='<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;padding-bottom:9px;border-bottom:2px solid #1a5fa8">'
+      +'<div>'+toHtml+(toSub.length?'<div style="font-size:9px;color:#555;margin-top:3px">'+toSub.join('　')+'</div>':'')+'</div>'
+      +'<div style="text-align:right;font-size:9px;color:#333;line-height:1.9">'+fromLines.join('<br>')+'</div></div>';
+  }
+  var amtSize=mode==='simple'?'38px':'28px';
+  var bkSec=mode==='simple'?'':'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:11px">'+bkHtml+'</div>';
+  var stSec=mode==='simple'?'':'<table style="width:100%;border-collapse:collapse;margin-bottom:10px">'+stepsHtml+'</table>';
+
+  return '<div style="font-family:sans-serif;font-size:10px;color:#000">'
+    +'<h2 style="font-size:13px;font-weight:700;border-bottom:2px solid #1a5fa8;padding-bottom:7px;margin-bottom:3px;color:#000">'+titles[mode]+'</h2>'
+    +'<p style="font-size:8px;color:#555;margin-bottom:12px">'+subtitle+'</p>'
+    +invHdr
+    +'<div style="background:linear-gradient(135deg,#eef4ff,#f3eeff);border:2px solid #1a5fa8;border-radius:8px;padding:16px;text-align:center;margin-bottom:11px">'
+    +'<div style="font-size:8px;font-weight:700;letter-spacing:.1em;color:#555;margin-bottom:6px">月額 利用者自己負担額（概算）</div>'
+    +'<div style="font-family:monospace;font-size:'+amtSize+';font-weight:600;color:#1a5fa8;line-height:1">'+copayAmt+'</div>'
+    +'<div style="font-size:12px;color:#555;margin-top:3px">円</div>'
+    +'<div style="font-size:8px;color:#777;margin-top:4px">'+copayNote+'</div>'
+    +'</div>'
+    +bkSec+stSec
+    +'<div style="background:#fffbe6;border:1px solid #e0c040;border-radius:5px;padding:7px 10px;font-size:8px;color:#665500">'
+    +'<strong>⚠ ご注意</strong>　概算計算です。正確な金額は事業所またはケアマネにご確認ください。</div>'
+    +'</div>';
+}
+
+function openPreview(mode){
+  _pvMode=mode||'simple';
+  _scrollY=window.pageYOffset;
+  updatePvTabs();
+  document.getElementById('pv-sheet').innerHTML=buildSheetHTML(_pvMode);
+  document.getElementById('pv-scroll').scrollTop=0;
+  document.getElementById('pv-modal').classList.add('open');
+  document.body.style.top='-'+_scrollY+'px';
+  document.body.style.position='fixed';
+  document.body.style.width='100%';
+  document.body.style.overflow='hidden';
+}
+
+function switchPreview(mode){
+  _pvMode=mode;
+  updatePvTabs();
+  document.getElementById('pv-sheet').innerHTML=buildSheetHTML(_pvMode);
+  document.getElementById('pv-scroll').scrollTop=0;
+}
+
+function updatePvTabs(){
+  var modes=['simple','detail','invoice'];
+  for(var i=0;i<modes.length;i++){
+    var t=document.getElementById('ptab-'+modes[i]);
+    if(t) t.classList.toggle('active',modes[i]===_pvMode);
+  }
+}
+
+function closePreview(){
+  document.getElementById('pv-modal').classList.remove('open');
+  document.body.style.position='';
+  document.body.style.top='';
+  document.body.style.width='';
+  document.body.style.overflow='';
+  window.scrollTo(0,_scrollY);
+}
+
+function execPrint(){
+  var titles={
+    simple:'定期巡回・随時対応型訪問介護看護　月額自己負担額（概算）',
+    detail:'定期巡回・随時対応型訪問介護看護　利用料計算結果（概算）',
+    invoice:'定期巡回・随時対応型訪問介護看護　利用料のご案内'
+  };
+  var svcEl=document.getElementById('serviceType');
+  var lvEl=document.getElementById('careLevel');
+  var tMonth=(document.getElementById('targetMonth').value||'').trim();
+  var sub=svcEl.options[svcEl.selectedIndex].text+'　'+lvEl.options[lvEl.selectedIndex].text;
+  if(tMonth) sub+='　対象月：'+tMonth;
+  document.getElementById('pt-title').textContent=titles[_pvMode];
+  document.getElementById('pt-sub').textContent=sub;
+  closePreview();
+  setTimeout(function(){window.print();},400);
+}
+
+function savePDF(){
+  var jsPDFLib = window.jspdf ? window.jspdf.jsPDF : (window.jsPDF || null);
+  if(!jsPDFLib){alert('PDFライブラリの読み込みに失敗しました。\nネット接続をご確認ください。');return;}
+  if(typeof html2canvas === 'undefined'){alert('html2canvasの読み込みに失敗しました。\nネット接続をご確認ください。');return;}
+  var pvBtn = document.getElementById('pv-pdf');
+  var origText = pvBtn ? pvBtn.textContent : '';
+  if(pvBtn){ pvBtn.textContent = '⏳ 生成中...'; pvBtn.disabled = true; }
+  var sheet = document.getElementById('pv-sheet');
+  var opt = {scale:2,useCORS:true,allowTaint:true,backgroundColor:'#ffffff',logging:false,windowWidth:sheet.scrollWidth,windowHeight:sheet.scrollHeight};
+  var CANVAS_SCALE=2; /* scaleオプションと同値 */
+  html2canvas(sheet, opt).then(function(canvas){
+    var imgData = canvas.toDataURL('image/jpeg', 0.92);
+    var imgW = canvas.width;
+    var imgH = canvas.height;
+    var pageW = 210;
+    var pageH = 297;
+    var margin = 10;
+    var contentW = pageW - margin * 2;
+    var ratio = contentW / (imgW / CANVAS_SCALE);
+    var scaledH = (imgH / CANVAS_SCALE) * ratio;
+    var pageContentH = pageH - margin * 2;
+    var doc = new jsPDFLib({orientation:'portrait',unit:'mm',format:'a4'});
+    if(scaledH <= pageContentH){
+      /* 1ページに収まる場合はそのまま */
+      doc.addImage(imgData, 'JPEG', margin, margin, contentW, scaledH);
+    } else {
+      /* 縦に長い場合は複数ページに分割 */
+      var pageImgH = Math.floor(pageContentH / ratio * CANVAS_SCALE);
+      var offsetY = 0;
+      while(offsetY < imgH){
+        var sliceH = Math.min(pageImgH, imgH - offsetY);
+        var sliceCanvas = document.createElement('canvas');
+        sliceCanvas.width = imgW;
+        sliceCanvas.height = sliceH;
+        sliceCanvas.getContext('2d').drawImage(canvas, 0, offsetY, imgW, sliceH, 0, 0, imgW, sliceH);
+        var sliceData = sliceCanvas.toDataURL('image/jpeg', 0.92);
+        if(offsetY > 0) doc.addPage();
+        doc.addImage(sliceData, 'JPEG', margin, margin, contentW, (sliceH / CANVAS_SCALE) * ratio);
+        offsetY += sliceH;
+      }
+    }
+    var uName = (document.getElementById('userName').value || '').trim();
+    var tMonth = (document.getElementById('targetMonth').value || '').trim();
+    var now = new Date();
+    var dateStr = now.getFullYear() + String(now.getMonth()+1).padStart(2,'0') + String(now.getDate()).padStart(2,'0');
+    var modeLabel = {simple:'kantan', detail:'syousai', invoice:'seikyusyo'}[_pvMode] || _pvMode;
+    var fname = 'teikiJunkai_' + modeLabel + (uName ? '_'+uName : '') + '_' + (tMonth || dateStr) + '.pdf';
+    fname = fname.replace(/[\s　]/g, '_');
+    if(pvBtn){ pvBtn.textContent = origText; pvBtn.disabled = false; }
+    try{ doc.save(fname); }
+    catch(e){ var dataUri = doc.output('datauristring'); window.open(dataUri, '_blank'); }
+  }).catch(function(err){
+    if(pvBtn){ pvBtn.textContent = origText; pvBtn.disabled = false; }
+    alert('PDF生成に失敗しました。\n' + err.message);
+  });
+}
+
+/* ── 種別による加算制限制御 ── */
+var NURSING_ONLY_GROUPS=['nursing','tokubetsu'];
+var NURSING_ONLY_CBS=['c17']; /* ターミナルケアマネジメント加算 */
+
+function updateAddonAvailability(){
+  var svc=document.getElementById('serviceType').value;
+  var isNursing=(svc==='integrated_nursing');
+
+  /* 訪問看護関連・特別管理加算セクション丸ごと制御 */
+  for(var gi=0;gi<NURSING_ONLY_GROUPS.length;gi++){
+    var grp=NURSING_ONLY_GROUPS[gi];
+    var body=document.getElementById('body-'+grp);
+    var btn=document.getElementById('abtn-'+grp);
+    var hdr=document.getElementById('ahdr-'+grp);
+    if(!body||!btn) continue;
+    var cbs=body.querySelectorAll('.cb-input');
+    if(!isNursing){
+      for(var ci=0;ci<cbs.length;ci++){ cbs[ci].checked=false; cbs[ci].disabled=true; }
+      btn.classList.add('acc-disabled');
+      if(!hdr.querySelector('.acc-na-badge')){
+        var badge=document.createElement('span');
+        badge.className='acc-na-badge';
+        badge.textContent='算定不可';
+        hdr.querySelector('.acc-left').appendChild(badge);
+      }
+    } else {
+      /* まずバッジ削除・enabled化してからチェック状態は触らない */
+      for(var ci=0;ci<cbs.length;ci++){ cbs[ci].disabled=false; }
+      btn.classList.remove('acc-disabled');
+      var badge=hdr.querySelector('.acc-na-badge');
+      if(badge) badge.parentNode.removeChild(badge);
+    }
+  }
+
+  /* ターミナルケアマネジメント加算（個別制御） */
+  for(var bi=0;bi<NURSING_ONLY_CBS.length;bi++){
+    var cbId=NURSING_ONLY_CBS[bi];
+    var cb=document.getElementById(cbId);
+    var lbl=document.querySelector('label[for="'+cbId+'"]');
+    if(!cb||!lbl) continue;
+    if(!isNursing){
+      cb.checked=false; cb.disabled=true;
+      lbl.style.opacity='.4'; lbl.style.pointerEvents='none';
+      if(!lbl.querySelector('.acc-na-badge')){
+        var badge=document.createElement('span');
+        badge.className='acc-na-badge';
+        badge.textContent='算定不可';
+        lbl.querySelector('.cb-body').appendChild(badge);
+      }
+    } else {
+      cb.disabled=false;
+      lbl.style.opacity=''; lbl.style.pointerEvents='';
+      var badge=lbl.querySelector('.acc-na-badge');
+      if(badge) badge.parentNode.removeChild(badge);
+    }
+  }
+
+  /* 処遇改善加算の説明文を種別連動で更新 */
+  var shogaiBox=document.querySelector('.shogai-box');
+  if(shogaiBox){
+    if(isNursing){
+      shogaiBox.innerHTML='<strong>計算方法（一体型・看護あり）</strong><br>加減算後の総単位数×加算率　Ⅰ＝24.5%　Ⅱ＝22.4%　Ⅲ＝18.2%　Ⅳ＝14.5%';
+    } else if(svc==='integrated_no_nursing'){
+      shogaiBox.innerHTML='<strong>計算方法（一体型・看護なし）</strong><br>加減算後の総単位数×加算率　Ⅰ＝24.5%　Ⅱ＝22.4%　Ⅲ＝18.2%　Ⅳ＝14.5%';
+    } else {
+      shogaiBox.innerHTML='<strong>計算方法（連携型）</strong><br>加減算後の総単位数×加算率　Ⅰ＝24.5%　Ⅱ＝22.4%　Ⅲ＝18.2%　Ⅳ＝14.5%';
+    }
+  }
+
+  /* カウント更新（disabled は除外） */
+  var groups=['mgmt','nursing','tokubetsu','taisei','ninchi','reha','init','area','bldg','pctded'];
+  for(var k=0;k<groups.length;k++){
+    var el=document.getElementById('cnt-'+groups[k]);
+    if(!el) continue;
+    var allInGroup=document.querySelectorAll('.cb-input[data-group="'+groups[k]+'"]:checked');
+    var n=0;for(var ki=0;ki<allInGroup.length;ki++){if(!allInGroup[ki].disabled) n++;}
+    el.textContent=n;
+    el.style.background=n>0?'rgba(26,111,212,.2)':'rgba(26,111,212,.08)';
+  }
+}
+
+/* ── 履歴管理（全状態保存・完全復元） ── */
+function captureFullState(){
+  var checkedIds=[];
+  var allCbs=document.querySelectorAll('.cb-input');
+  for(var i=0;i<allCbs.length;i++){
+    if(allCbs[i].checked) checkedIds.push(allCbs[i].id);
+  }
+  return {
+    svc: document.getElementById('serviceType').value,
+    lv:  document.getElementById('careLevel').value,
+    up:  parseFloat(document.getElementById('region').value).toFixed(2),
+    cr:  String(parseFloat(document.getElementById('copayRate').value)),
+    md:  document.getElementById('monthDays').value,
+    ud:  document.getElementById('usedDays').value,
+    dd:  document.getElementById('daycareDays').value,
+    dr:  document.getElementById('daycareUnitRate').value,
+    sr:  document.getElementById('shokaigo').value,
+    niD: document.getElementById('niDays').value,
+    inD: document.getElementById('initDays').value,
+    uName:   document.getElementById('userName').value,
+    coName:  document.getElementById('companyName').value,
+    stName:  document.getElementById('staffName').value,
+    tMonth:  document.getElementById('targetMonth').value,
+    cDate:   document.getElementById('certDate').value,
+    remarks: document.getElementById('remarks').value,
+    checkedIds: checkedIds,
+    dcAutoSync: (function(){ var el=document.getElementById('daycareAutoSync'); return el?el.checked:false; })()
+  };
+}
+
+function restoreFullState(h){
+  if(!h) return;
+  /* region値は小数点以下2桁で一致させる */
+  var upVal=h.up?parseFloat(h.up).toFixed(2):null;
+  var fields={
+    serviceType:h.svc, careLevel:h.lv, region:upVal, copayRate:h.cr,
+    monthDays:h.md, usedDays:h.ud, daycareDays:h.dd, daycareUnitRate:h.dr,
+    shokaigo:h.sr, niDays:h.niD, initDays:h.inD,
+    userName:h.uName, companyName:h.coName, staffName:h.stName,
+    targetMonth:h.tMonth, certDate:h.cDate, remarks:h.remarks
+  };
+  for(var id in fields){
+    var el=document.getElementById(id);
+    if(el && fields[id]!=null) el.value=fields[id];
+  }
+  /* daycareAutoSync チェックボックスを復元 */
+  var dcAuto=document.getElementById('daycareAutoSync');
+  if(dcAuto && h.dcAutoSync!=null) dcAuto.checked=!!h.dcAutoSync;
+  /* monthDays 連動：usedDays・niDays の上限を合わせる */
+  if(h.md) syncMonthDays(h.md);
+  /* ① チェックボックスを復元する前に、すべてのdisabled・バッジを一旦クリア */
+  var allCbs=document.querySelectorAll('.cb-input');
+  for(var i=0;i<allCbs.length;i++){ allCbs[i].disabled=false; }
+  var badges=document.querySelectorAll('.acc-na-badge');
+  for(var i=0;i<badges.length;i++){ badges[i].parentNode.removeChild(badges[i]); }
+  var disabledBtns=document.querySelectorAll('.acc-disabled');
+  for(var i=0;i<disabledBtns.length;i++){ disabledBtns[i].classList.remove('acc-disabled'); }
+  var disabledLbls=document.querySelectorAll('.cb-lbl[style]');
+  for(var i=0;i<disabledLbls.length;i++){ disabledLbls[i].style.opacity=''; disabledLbls[i].style.pointerEvents=''; }
+
+  /* ② チェックボックス状態を復元・見た目を確実に同期（checked方向も含む） */
+  var ids=h.checkedIds||[];
+  for(var i=0;i<allCbs.length;i++){
+    var cb=allCbs[i];
+    var isChecked=ids.indexOf(cb.id)>-1;
+    cb.checked=isChecked;
+    var lbl=cb.nextElementSibling;
+    if(lbl&&lbl.classList.contains('cb-lbl')){
+      lbl.classList.add('cb-force-reset');
+    }
+    /* inline-box表示更新 */
+    var daysId=cb.getAttribute('data-needs-days');
+    if(daysId){
+      var box=document.getElementById(daysId+'-box');
+      if(box){
+        var any=document.querySelectorAll('.cb-input[data-needs-days="'+daysId+'"]:checked').length>0;
+        box.classList.toggle('show',any);
+      }
+    }
+  }
+  /* 次フレームでforce-resetクラスを外す（ブラウザにCSS :checked再評価させる） */
+  (window.requestAnimationFrame||function(f){setTimeout(f,16);})(function(){
+    var lbls=document.querySelectorAll('.cb-lbl.cb-force-reset');
+    for(var j=0;j<lbls.length;j++) lbls[j].classList.remove('cb-force-reset');
+  });
+  /* ③ アコーディオンカウント更新 */
+  var groups=['mgmt','nursing','tokubetsu','taisei','ninchi','reha','init','area','bldg','pctded'];
+  for(var k=0;k<groups.length;k++){
+    var el=document.getElementById('cnt-'+groups[k]);
+    if(!el) continue;
+    var allInGroup=document.querySelectorAll('.cb-input[data-group="'+groups[k]+'"]:checked');
+    var n=0;for(var ki=0;ki<allInGroup.length;ki++){if(!allInGroup[ki].disabled) n++;}
+    el.textContent=n;
+    el.style.background=n>0?'rgba(26,111,212,.2)':'rgba(26,111,212,.08)';
+  }
+  /* ④ 種別制限を正しい種別で再適用（syncMonthDays の後に呼ぶ） */
+  updateAddonAvailability();
+}
+
+function saveHistory(state){
+  var list=loadHistoryList();
+  list.unshift(state);
+  if(list.length>3) list=list.slice(0,3);
+  try{ localStorage.setItem('teiki_history',JSON.stringify(list)); }catch(e){}
+}
+function loadHistoryList(){
+  try{ var s=localStorage.getItem('teiki_history'); return s?JSON.parse(s):[]; }catch(e){ return []; }
+}
+function clearHistory(){
+  try{ localStorage.removeItem('teiki_history'); }catch(e){}
+  renderHistory();
+}
+function renderHistory(){
+  var list=loadHistoryList();
+  var sec=document.getElementById('history-section');
+  var ul=document.getElementById('hist-list');
+  if(!list.length){ sec.classList.remove('show'); return; }
+  sec.classList.add('show');
+  var svcLabel={integrated_no_nursing:'一体型(看護なし)',integrated_nursing:'一体型(看護あり)',cooperation:'連携型'};
+  var html='';
+  for(var i=0;i<list.length;i++){
+    var h=list[i];
+    var svcT=svcLabel[h.svc]||h.svc;
+    var addCount=h.checkedIds?h.checkedIds.length:0;
+    html+='<div class="hist-item" data-idx="'+i+'">'
+      +'<div class="hist-left">'
+      +'<div class="hist-label">'+escHtml(svcT)+'　要介護'+escHtml(String(h.lv))+'　'+Math.round(parseFloat(h.cr)*100)+'割</div>'
+      +'<div class="hist-sub">'+escHtml(h.time)+(addCount?'　加算'+addCount+'件':'')+'　単価'+parseFloat(h.up).toFixed(2)+'円</div>'
+      +'</div>'
+      +'<div><span class="hist-amount">'+fmt(h.copay)+'</span><span class="hist-yen">円</span></div>'
+      +'</div>';
+  }
+  ul.innerHTML=html;
+  var items=ul.querySelectorAll('.hist-item');
+  for(var j=0;j<items.length;j++){
+    (function(item){
+      onTap(item,function(){
+        var idx=parseInt(item.getAttribute('data-idx'));
+        var h=loadHistoryList()[idx];
+        if(!h) return;
+        restoreFullState(h); /* updateAddonAvailability は restoreFullState 末尾で呼ばれる */
+        document.getElementById('result').style.display='none';
+        window.scrollTo(0,0);
+        /* DOM反映を待ってから再計算（IE対応のsetTimeoutフォールバック） */
+        var raf=window.requestAnimationFrame||function(fn){setTimeout(fn,16);};
+        raf(function(){ calculate(); });
+      });
+    })(items[j]);
+  }
+}
+
+document.addEventListener('DOMContentLoaded',function(){
+  renderHistory();
+  var histClearBtn=document.getElementById('hist-clear-btn');
+  if(histClearBtn) onTap(histClearBtn,function(){ clearHistory(); });
+
+  /* 種別変更時に加算制限を更新 + 通所連動（autosave は watchEls に任せる） */
+  var svcSelect=document.getElementById('serviceType');
+  if(svcSelect){
+    svcSelect.addEventListener('change', function(){
+      updateAddonAvailability();
+      syncDaycareRate();
+    });
+    updateAddonAvailability();
+  }
+
+  /* monthDays 上限を初期値で同期 */
+  var monthDaysEl=document.getElementById('monthDays');
+  if(monthDaysEl) syncMonthDays(monthDaysEl.value);
+
+  /* 要介護度変更時に通所連動（autosave は watchEls に任せる） */
+  var careLevelSelect=document.getElementById('careLevel');
+  if(careLevelSelect){
+    careLevelSelect.addEventListener('change', function(){ syncDaycareRate(); });
+  }
+
+  /* 通所日数変更時：連動のみ（autosave は watchEls に任せる） */
+  var daycareDaysEl=document.getElementById('daycareDays');
+  if(daycareDaysEl){
+    daycareDaysEl.addEventListener('input', function(){ syncDaycareRate(); });
+  }
+
+  /* 自動保存：チェックボックス以外のインプット・セレクトの変更を監視 */
+  var watchEls=document.querySelectorAll('input:not(.cb-input),select,textarea');
+  for(var wi=0;wi<watchEls.length;wi++){
+    watchEls[wi].addEventListener('change', autosave);
+    watchEls[wi].addEventListener('input',  autosave);
+  }
+
+  /* 起動時に自動保存を復元（ページリロード対応） */
+  if(restoreAutosave()){
+    /* 復元後にチェックボックスの見た目を整える */
+    (window.requestAnimationFrame||function(f){setTimeout(f,16);})(function(){
+      var lbls=document.querySelectorAll('.cb-lbl.cb-force-reset');
+      for(var j=0;j<lbls.length;j++) lbls[j].classList.remove('cb-force-reset');
+    });
+  }
+
+  var accBtns=document.querySelectorAll('[data-acc]');
+  for(var i=0;i<accBtns.length;i++){
+    (function(btn){onTap(btn,function(){toggleAcc(btn.getAttribute('data-acc'));});})(accBtns[i]);
+  }
+  var calcBtn=document.querySelector('[data-action="calculate"]');
+  if(calcBtn) onTap(calcBtn,function(){calculate();});
+  var resetBtn=document.querySelector('[data-action="reset"]');
+  if(resetBtn) onTap(resetBtn,function(){resetResult();});
+  var fullResetBtn=document.querySelector('[data-action="fullreset"]');
+  if(fullResetBtn) onTap(fullResetBtn,function(){ openResetDialog(); });
+  /* リセットダイアログボタン */
+  var rdlgCancel=document.getElementById('rdlg-cancel');
+  var rdlgOk=document.getElementById('rdlg-ok');
+  if(rdlgCancel) onTap(rdlgCancel,function(){ closeResetDialog(); });
+  if(rdlgOk) onTap(rdlgOk,function(){ closeResetDialog(); fullReset(); });
+  /* ダイアログ背景クリックで閉じる */
+  var rdlg=document.getElementById('reset-dialog');
+  if(rdlg) rdlg.addEventListener('click',function(e){ if(e.target===rdlg) closeResetDialog(); });
+  var pvBtns=document.querySelectorAll('[data-preview]');
+  for(var i=0;i<pvBtns.length;i++){
+    (function(btn){onTap(btn,function(){openPreview(btn.getAttribute('data-preview'));});})(pvBtns[i]);
+  }
+  var swBtns=document.querySelectorAll('[data-switch]');
+  for(var i=0;i<swBtns.length;i++){
+    (function(btn){onTap(btn,function(){switchPreview(btn.getAttribute('data-switch'));});})(swBtns[i]);
+  }
+  var pdfBtn=document.querySelector('[data-action="savepdf"]');
+  if(pdfBtn) onTap(pdfBtn,function(){savePDF();});
+  var printBtn=document.querySelector('[data-action="execprint"]');
+  if(printBtn) onTap(printBtn,function(){execPrint();});
+  var closeBtn=document.querySelector('[data-action="close"]');
+  if(closeBtn) onTap(closeBtn,function(){closePreview();});
+  var allCbs=document.querySelectorAll('.cb-input');
+  for(var i=0;i<allCbs.length;i++){
+    allCbs[i].addEventListener('change',function(){
+      var excl=this.getAttribute('data-exclusive');
+      if(excl&&this.checked){
+        var sibs=document.querySelectorAll('.cb-input[data-exclusive="'+excl+'"]');
+        for(var j=0;j<sibs.length;j++){if(sibs[j]!==this) sibs[j].checked=false;}
+      }
+      var daysId=this.getAttribute('data-needs-days');
+      if(daysId){
+        var box=document.getElementById(daysId+'-box');
+        if(box){
+          var any=document.querySelectorAll('.cb-input[data-needs-days="'+daysId+'"]:checked').length>0;
+          box.classList.toggle('show',any);
+        }
+      }
+      var groups=['mgmt','nursing','tokubetsu','taisei','ninchi','reha','init','area','bldg','pctded'];
+      for(var k=0;k<groups.length;k++){
+        var el=document.getElementById('cnt-'+groups[k]);
+        if(!el) continue;
+        var allInGroup=document.querySelectorAll('.cb-input[data-group="'+groups[k]+'"]:checked');
+        var n=0;for(var ki=0;ki<allInGroup.length;ki++){if(!allInGroup[ki].disabled) n++;}
+        el.textContent=n;
+        el.style.background=n>0?'rgba(26,111,212,.2)':'rgba(26,111,212,.08)';
+      }
+      autosave();
+    });
+  }
+});
+
+})();
+</script>
+</body>
+</html>
